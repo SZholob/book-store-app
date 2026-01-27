@@ -24,6 +24,10 @@ public class Order {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
     private LocalDateTime orderDate;
 
     private BigDecimal price;
