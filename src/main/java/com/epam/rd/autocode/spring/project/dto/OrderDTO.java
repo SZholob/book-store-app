@@ -1,6 +1,20 @@
 package com.epam.rd.autocode.spring.project.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderDTO{
-    // TODO Place your code here
+    private String clientEmail;
+    private String employeeEmail;
+    private LocalDateTime orderDate;
+    private BigDecimal price;
+    private List<BookItemDTO> bookItems;
 }
