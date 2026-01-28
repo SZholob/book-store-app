@@ -52,10 +52,9 @@ public class BookServiceImpl implements BookService {
         Book existingBook = bookRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Book not found with name: " + name));
 
-        Book newBookData = modelMapper.map(bookDTO, Book.class);
-        newBookData.setId(existingBook.getId());
+        modelMapper.map(bookDTO, existingBook);
 
-        Book updatedBook = bookRepository.save(newBookData);
+        Book updatedBook = bookRepository.save(existingBook);
         return modelMapper.map(updatedBook, BookDTO.class);
     }
 

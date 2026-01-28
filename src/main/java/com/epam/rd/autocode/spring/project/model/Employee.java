@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "employees")
+@Table(name = "EMPLOYEES")
 public class Employee extends User {
     @Column(name = "birth_date")
     private LocalDate birthDate;

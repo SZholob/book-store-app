@@ -20,7 +20,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
-    @GetMapping("/book/{name}")
+    @GetMapping("/{name}")
     public ResponseEntity<BookDTO> getBookByName(@PathVariable String name){
         return ResponseEntity.ok(bookService.getBookByName(name));
     }
