@@ -23,4 +23,6 @@ public class BookDTO{
     private String characteristics;
     private String description;
     private Language language;
+    private String imageUrl;
+    private Integer quantity;
 }

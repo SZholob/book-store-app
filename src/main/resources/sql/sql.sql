@@ -1,26 +1,26 @@
-INSERT INTO EMPLOYEES (BIRTH_DATE, EMAIL, NAME, PASSWORD, PHONE)
-VALUES ('1990-05-15', 'john.doe@email.com', 'John Doe', 'pass123', '555-123-4567'),
-       ('1985-09-20', 'jane.smith@email.com', 'Jane Smith', 'abc456', '555-987-6543'),
-       ('1978-03-08', 'bob.jones@email.com', 'Bob Jones', 'qwerty789', '555-321-6789'),
-       ('1982-11-25', 'alice.white@email.com', 'Alice White', 'secret567', '555-876-5432'),
-       ('1995-07-12', 'mike.wilson@email.com', 'Mike Wilson', 'mypassword', '555-234-5678'),
-       ('1989-01-30', 'sara.brown@email.com', 'Sara Brown', 'letmein123', '555-876-5433'),
-       ('1975-06-18', 'tom.jenkins@email.com', 'Tom Jenkins', 'pass4321', '555-345-6789'),
-       ('1987-12-04', 'lisa.taylor@email.com', 'Lisa Taylor', 'securepwd', '555-789-0123'),
-       ('1992-08-22', 'david.wright@email.com', 'David Wright', 'access123', '555-456-7890'),
-       ('1980-04-10', 'emily.harris@email.com', 'Emily Harris', '1234abcd', '555-098-7654');
+INSERT INTO EMPLOYEES (BIRTH_DATE, EMAIL, NAME, PASSWORD, PHONE, ROLE)
+VALUES ('1990-05-15', 'john.doe@email.com', 'John Doe', 'pass123', '555-123-4567', 'EMPLOYEE'),
+       ('1985-09-20', 'jane.smith@email.com', 'Jane Smith', 'abc456', '555-987-6543', 'EMPLOYEE'),
+       ('1978-03-08', 'bob.jones@email.com', 'Bob Jones', 'qwerty789', '555-321-6789', 'EMPLOYEE'),
+       ('1982-11-25', 'alice.white@email.com', 'Alice White', 'secret567', '555-876-5432', 'EMPLOYEE'),
+       ('1995-07-12', 'mike.wilson@email.com', 'Mike Wilson', 'mypassword', '555-234-5678', 'EMPLOYEE'),
+       ('1989-01-30', 'sara.brown@email.com', 'Sara Brown', 'letmein123', '555-876-5433', 'EMPLOYEE'),
+       ('1975-06-18', 'tom.jenkins@email.com', 'Tom Jenkins', 'pass4321', '555-345-6789', 'EMPLOYEE'),
+       ('1987-12-04', 'lisa.taylor@email.com', 'Lisa Taylor', 'securepwd', '555-789-0123', 'EMPLOYEE'),
+       ('1992-08-22', 'david.wright@email.com', 'David Wright', 'access123', '555-456-7890', 'EMPLOYEE'),
+       ('1980-04-10', 'emily.harris@email.com', 'Emily Harris', '1234abcd', '555-098-7654', 'EMPLOYEE');
 
-INSERT INTO CLIENTS (BALANCE, EMAIL, NAME, PASSWORD)
-VALUES (1000.00, 'client1@example.com', 'Medelyn Wright', 'password123'),
-       (1500.50, 'client2@example.com', 'Landon Phillips', 'securepass'),
-       (800.75, 'client3@example.com', 'Harmony Mason', 'abc123'),
-       (1200.25, 'client4@example.com', 'Archer Harper', 'pass456'),
-       (900.80, 'client5@example.com', 'Kira Jacobs', 'letmein789'),
-       (1100.60, 'client6@example.com', 'Maximus Kelly', 'adminpass'),
-       (1300.45, 'client7@example.com', 'Sierra Mitchell', 'mypassword'),
-       (950.30, 'client8@example.com', 'Quinton Saunders', 'test123'),
-       (1050.90, 'client9@example.com', 'Amina Clarke', 'qwerty123'),
-       (880.20, 'client10@example.com', 'Bryson Chavez', 'pass789');
+INSERT INTO CLIENTS (BALANCE, EMAIL, NAME, PASSWORD, ROLE, IS_BLOCKED)
+VALUES (1000.00, 'client1@example.com', 'Medelyn Wright', 'password123', 'CUSTOMER', false),
+       (1500.50, 'client2@example.com', 'Landon Phillips', 'securepass', 'CUSTOMER', false),
+       (800.75, 'client3@example.com', 'Harmony Mason', 'abc123', 'CUSTOMER', false),
+       (1200.25, 'client4@example.com', 'Archer Harper', 'pass456', 'CUSTOMER', false),
+       (900.80, 'client5@example.com', 'Kira Jacobs', 'letmein789', 'CUSTOMER', false),
+       (1100.60, 'client6@example.com', 'Maximus Kelly', 'adminpass', 'CUSTOMER', false),
+       (1300.45, 'client7@example.com', 'Sierra Mitchell', 'mypassword', 'CUSTOMER', false),
+       (950.30, 'client8@example.com', 'Quinton Saunders', 'test123', 'CUSTOMER', false),
+       (1050.90, 'client9@example.com', 'Amina Clarke', 'qwerty123', 'CUSTOMER', false),
+       (880.20, 'client10@example.com', 'Bryson Chavez', 'pass789', 'CUSTOMER', false);
 
 INSERT INTO BOOKS (name, genre, age_group, price, publication_year, author, number_of_pages, characteristics,description, language)
 VALUES ('The Hidden Treasure', 'Adventure', 'ADULT', 24.99, '2018-05-15', 'Emily White', 400, 'Mysterious journey','An enthralling adventure of discovery', 'ENGLISH'),

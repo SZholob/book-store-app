@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.model;
 
 
+import com.epam.rd.autocode.spring.project.model.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -22,7 +23,7 @@ public class Employee extends User {
     private String phone;
 
     public Employee(long id, String email, String password, String name, LocalDate birthDate, String phone) {
-        super(id, email, password, name);
+        super(id, email, password, name, Role.EMPLOYEE);
         this.birthDate = birthDate;
         this.phone = phone;
     }

@@ -48,4 +48,9 @@ public class Book {
     @Enumerated(EnumType.STRING)
     private Language language;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private Integer quantity;
 }

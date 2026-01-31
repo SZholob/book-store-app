@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.model;
 
+import com.epam.rd.autocode.spring.project.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,5 +24,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }

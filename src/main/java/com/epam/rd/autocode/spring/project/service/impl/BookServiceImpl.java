@@ -8,6 +8,7 @@ import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public BookDTO addBook(BookDTO bookDTO) {
         if (bookRepository.findByName(bookDTO.getName()).isPresent()){
             throw new AlreadyExistException("Book already exists with name: " + bookDTO.getName());
@@ -60,6 +62,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public void deleteBookByName(String name) {
         Book book = bookRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Book not found with name: " + name));

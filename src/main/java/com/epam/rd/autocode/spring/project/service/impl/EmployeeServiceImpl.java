@@ -4,6 +4,7 @@ import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
 import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.Employee;
+import com.epam.rd.autocode.spring.project.model.enums.Role;
 import com.epam.rd.autocode.spring.project.repo.EmployeeRepository;
 import com.epam.rd.autocode.spring.project.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         Employee employee = modelMapper.map(employeeDTO, Employee.class);
+        employee.setRole(Role.EMPLOYEE);
         employee.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
         return modelMapper.map(employeeRepository.save(employee),EmployeeDTO.class);
     }

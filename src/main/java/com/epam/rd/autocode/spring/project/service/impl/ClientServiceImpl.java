@@ -4,10 +4,12 @@ import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.Client;
+import com.epam.rd.autocode.spring.project.model.enums.Role;
 import com.epam.rd.autocode.spring.project.repo.ClientRepository;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class ClientServiceImpl implements ClientService {
 
 
     @Override
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public List<ClientDTO> getAllClients() {
         return clientRepository.findAll().stream()
                 .map(client -> modelMapper.map(client, ClientDTO.class))
@@ -45,6 +48,7 @@ public class ClientServiceImpl implements ClientService {
             throw new AlreadyExistException("Client already exists: " + clientDTO.getEmail());
         }
         Client client = modelMapper.map(clientDTO, Client.class);
+        client.setRole(Role.CUSTOMER);
         client.setPassword(passwordEncoder.encode(client.getPassword()));
         return modelMapper.map(clientRepository.save(client), ClientDTO.class);
 
@@ -67,6 +71,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public void deleteClientByEmail(String email) {
         Client client = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Client not found: " + email));
