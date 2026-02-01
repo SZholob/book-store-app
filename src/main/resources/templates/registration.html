@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registration</title>
+</head>
+<body>
+<div style="text-align: center; margin-top: 50px;">
+    <h2>Register New Client</h2>
+
+    <div th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></div>
+
+    <form th:action="@{/registration}" th:object="${client}" method="post">
+        <p>
+            <label>Name:</label>
+            <input type="text" th:field="*{name}" required/>
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red"></span>
+        </p>
+        <p>
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" required/>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red"></span>
+        </p>
+        <p>
+            <label>Password:</label>
+            <input type="password" th:field="*{password}" required/>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red"></span>
+        </p>
+        <input type="hidden" name="balance" value="0"/>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <br/>
+    <a th:href="@{/login}">Back to Login</a>
+</div>
+</body>
+</html>

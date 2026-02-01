@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,13 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(book -> modelMapper.map(book, BookDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public BookDTO getBookById(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException("Book not found with ID: " + bookId));
+        return modelMapper.map(book, BookDTO.class);
     }
 
     @Override

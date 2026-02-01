@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Controller
 @RequestMapping("/books")
@@ -22,14 +21,14 @@ public class BookController {
     public String getAllBooks(Model model) {
         model.addAttribute("books", bookService.getAllBooks());
         System.out.println(model.getAttribute("books"));
-        return "books"; // Шукає templates/books.html
+        return "books";
     }
 
     @GetMapping("/{name}")
     public String getBookDetails(@PathVariable String name, Model model) {
         BookDTO book = bookService.getBookByName(name);
         model.addAttribute("book", book);
-        return "book-details"; // Шукає templates/book-details.html
+        return "book-details";
     }
 
     /*@GetMapping("/{name}")
@@ -41,7 +40,7 @@ public class BookController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public String showAddBookForm(Model model) {
         model.addAttribute("book", new BookDTO());
-        return "book-add"; // Потрібно буде створити цей шаблон пізніше
+        return "book-add";
     }
 
     @PostMapping("/add")

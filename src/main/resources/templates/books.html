@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Book Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .book-card img { height: 300px; object-fit: cover; }
+        .card:hover { transform: scale(1.02); transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/books">📚 BookStore</a>
+
+        <div class="d-flex align-items-center">
+
+            <a sec:authorize="isAuthenticated()" href="/cart" class="btn btn-warning me-3">
+                🛒 Cart
+            </a>
+
+            <a sec:authorize="hasRole('EMPLOYEE')" href="/books/add" class="btn btn-success me-3">+ Add Book</a>
+
+            <a sec:authorize="isAuthenticated()" href="/logout" class="btn btn-outline-light">Logout</a>
+
+            <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-light">Login</a>
+
+            <a sec:authorize="!isAuthenticated()" href="/registration" class="btn btn-outline-light ms-2">Register</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 class="mb-4 text-center">Available Books</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="book : ${books}">
+            <div class="card h-100 book-card shadow-sm border-0">
+                <div style="position: relative;">
+                    <img th:src="${book.imageUrl != null ? book.imageUrl : 'https://placehold.co/300x400?text=No+Image'}"
+                         class="card-img-top" alt="Book Cover"
+                         style="height: 300px; object-fit: cover;">
+
+                    <span class="badge bg-dark position-absolute top-0 end-0 m-2" th:text="${book.genre}">Genre</span>
+                </div>
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate" th:text="${book.name}" th:title="${book.name}">Book Title</h5>
+                    <p class="card-text text-muted small" th:text="${book.author}">Author</p>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <h5 class="text-primary mb-0" th:text="${book.price} + ' ₴'">Price</h5>
+                        <small class="text-muted" th:text="'In stock: ' + ${book.quantity}">Qty</small>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center mb-2">
+                    <a th:href="@{/books/{name}(name=${book.name})}" class="btn btn-outline-primary btn-sm">Details</a>
+
+                    <div th:if="${book.quantity > 0}">
+
+                        <form th:action="@{/cart/add}" method="post">
+                            <input type="hidden" name="bookId" th:value="${book.id}">
+                            <input type="hidden" name="quantity" value="1"> <button type="submit" class="btn btn-success btn-sm" sec:authorize="isAuthenticated()">
+                            🛒 Add
+                        </button>
+
+                            <a href="/login" class="btn btn-outline-warning btn-sm" sec:authorize="!isAuthenticated()">
+                                Login to Buy
+                            </a>
+                        </form>
+                    </div>
+
+                    <div th:unless="${book.quantity > 0}">
+                        <span class="badge bg-danger">Sold Out</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

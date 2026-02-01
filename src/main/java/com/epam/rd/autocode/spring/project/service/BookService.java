@@ -2,11 +2,14 @@ package com.epam.rd.autocode.spring.project.service;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface BookService {
 
     List<BookDTO> getAllBooks();
+
+    BookDTO getBookById(Long bookId);
 
     BookDTO getBookByName(String name);
 

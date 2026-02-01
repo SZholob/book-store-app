@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Shopping Cart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="/books">📚 BookStore</a>
+
+    <div class="d-flex text-white">
+            <span class="fw-bold text-warning me-2" th:if="${userBalance != null}">
+                Balance: <span th:text="${userBalance}">0.00</span> UAH
+            </span>
+      <a href="/books" class="btn btn-sm btn-outline-light">Back to Shop</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <h2 class="mb-4">Your Shopping Cart</h2>
+
+  <div th:if="${#lists.isEmpty(cartItems)}" class="alert alert-info">
+    Your cart is empty.
+  </div>
+
+  <div th:if="${not #lists.isEmpty(cartItems)}">
+    <table class="table table-striped bg-white shadow-sm rounded align-middle">
+      <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity (Stock)</th> <th>Total</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${cartItems}">
+        <td th:text="${item.bookName}">Book Name</td>
+        <td th:text="${item.price} + ' UAH'">Price</td>
+
+        <td>
+          <form action="/cart/update" method="post" class="d-flex align-items-center">
+            <input type="hidden" name="bookId" th:value="${item.bookId}">
+
+            <input type="number" name="quantity"
+                   th:value="${item.quantity}"
+                   min="1"
+                   th:max="${item.availableStock}"
+                   class="form-control form-control-sm me-2"
+                   style="width: 70px;">
+
+            <span class="text-muted small me-2" th:text="'(of ' + ${item.availableStock} + ')'"></span>
+
+            <button type="submit" class="btn btn-sm btn-outline-primary">↻</button>
+          </form>
+        </td>
+
+        <td th:text="${item.getTotalPrice()} + ' UAH'">Total</td>
+        <td>
+          <form action="/cart/remove" method="post">
+            <input type="hidden" name="bookId" th:value="${item.bookId}">
+            <button type="submit" class="btn btn-sm btn-danger">❌</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center mt-4 p-3 bg-white rounded shadow-sm">
+      <div>
+        <h5>Your Balance: <span class="text-primary" th:text="${userBalance} + ' UAH'"></span></h5>
+
+        <div th:if="${totalPrice > userBalance}" class="text-danger fw-bold">
+          ⚠️ Not enough money! Top up your balance.
+        </div>
+      </div>
+
+      <div class="text-end">
+        <h3 class="me-4">Total: <span class="text-success" th:text="${totalPrice} + ' UAH'"></span></h3>
+
+        <form action="/cart/checkout" method="post">
+          <button type="submit" class="btn btn-lg btn-success"
+                  th:disabled="${totalPrice > userBalance}">
+            ✅ Checkout
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

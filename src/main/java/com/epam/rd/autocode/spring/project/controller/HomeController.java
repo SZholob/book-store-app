@@ -41,7 +41,7 @@ public class HomeController {
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("client", new ClientDTO());
-        return "registration"; // templates/registration.html
+        return "registration";
     }
 
     @PostMapping("/registration")
@@ -53,7 +53,7 @@ public class HomeController {
         }
         try {
             clientService.addClient(clientDTO);
-            return "redirect:/login?success"; // Успішна реєстрація -> на логін
+            return "redirect:/login?success";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Registration failed: " + e.getMessage());
             return "registration";

@@ -29,19 +29,19 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Вимикаємо CSRF для простоти тестів
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // -- ПУБЛІЧНИЙ ДОСТУП --
                         .requestMatchers("/", "/login", "/registration", "/error").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 
-                        // Дозволяємо перегляд книг усім (навіть незалогіненим)
+                        // Дозволяємо перегляд книг усім
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll()
 
-                        // Дозволяємо реєстрацію через API (якщо форма використовує цей ендпоінт)
+                        // Дозволяємо реєстрацію через API
                         .requestMatchers(HttpMethod.POST, "/clients").permitAll()
 
-                        // -- ЗАХИЩЕНІ СЕКЦІЇ --
+
                         // Співробітники
                         .requestMatchers("/employees/**").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.POST, "/books/**").hasRole("EMPLOYEE")
@@ -52,10 +52,10 @@ public class SecurityConfig{
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Ваша кастомна сторінка входу (HomeController)
-                        .loginProcessingUrl("/login") // Куди форма має слати POST запит (Spring обробить сам)
-                        .defaultSuccessUrl("/books", true) // Куди кинути після успішного входу
-                        .failureUrl("/login?error") // Куди, якщо пароль неправильний
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/books", true)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
