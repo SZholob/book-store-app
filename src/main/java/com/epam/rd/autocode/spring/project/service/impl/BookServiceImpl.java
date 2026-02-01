@@ -8,6 +8,8 @@ import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +24,28 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
 
-    @Override
+    /*@Override
     public List<BookDTO> getAllBooks() {
         return bookRepository.findAll()
                 .stream()
                 .map(book -> modelMapper.map(book, BookDTO.class))
                 .collect(Collectors.toList());
+    }*/
+
+    @Override
+    public Page<BookDTO> getAllBooks(String keyword, String genre, Pageable pageable) {
+        Page<Book> bookPage;
+
+        if (genre != null && !genre.isEmpty()){
+            bookPage = bookRepository.findByGenre(genre, pageable);
+        }else if (keyword != null && !keyword.isEmpty()) {
+            bookPage = bookRepository.findByNameContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword, pageable);
+        } else {
+
+            bookPage = bookRepository.findAll(pageable);
+        }
+
+        return bookPage.map(book -> modelMapper.map(book, BookDTO.class));
     }
 
     @Override
@@ -54,6 +72,11 @@ public class BookServiceImpl implements BookService {
         Book book = modelMapper.map(bookDTO, Book.class);
         Book saveBook = bookRepository.save(book);
         return modelMapper.map(saveBook, BookDTO.class);
+    }
+
+    @Override
+    public List<String> getAllGenres() {
+        return bookRepository.findAllGenres();
     }
 
     @Override

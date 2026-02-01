@@ -5,83 +5,183 @@
     <title>Book Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .book-card img { height: 300px; object-fit: cover; }
-        .card:hover { transform: scale(1.02); transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .book-card:hover {
+            transform: translateY(-5px);
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
     </style>
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/books">📚 BookStore</a>
+        <a class="navbar-brand fw-bold" href="/books">📚 BookStore</a>
 
-        <div class="d-flex align-items-center">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <a sec:authorize="isAuthenticated()" href="/cart" class="btn btn-warning me-3">
-                🛒 Cart
-            </a>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto align-items-center">
 
-            <a sec:authorize="hasRole('EMPLOYEE')" href="/books/add" class="btn btn-success me-3">+ Add Book</a>
+                <li class="nav-item me-2" sec:authorize="isAuthenticated()">
+                    <a href="/cart" class="btn btn-warning position-relative">
+                        🛒 Cart
+                    </a>
+                </li>
 
-            <a sec:authorize="isAuthenticated()" href="/logout" class="btn btn-outline-light">Logout</a>
+                <li class="nav-item me-2" sec:authorize="hasRole('EMPLOYEE')">
+                    <a href="/books/add" class="btn btn-success">+ Add Book</a>
+                </li>
 
-            <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-light">Login</a>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a href="/logout" class="btn btn-outline-light">Logout</a>
+                </li>
 
-            <a sec:authorize="!isAuthenticated()" href="/registration" class="btn btn-outline-light ms-2">Register</a>
+                <li class="nav-item me-2" sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="btn btn-light">Login</a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a href="/registration" class="btn btn-outline-light">Register</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
 
-<div class="container">
-    <h2 class="mb-4 text-center">Available Books</h2>
+<div class="container flex-grow-1">
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center gy-3">
+                <div class="col-md-4">
+                    <h2 class="mb-0 text-secondary">Available Books</h2>
+                </div>
+
+                <div class="col-md-8">
+                    <form action="/books" method="get" class="d-flex flex-wrap gap-2 justify-content-md-end">
+                        <input type="hidden" name="sortDir" th:value="${sortDir}">
+
+                        <select name="genre" class="form-select w-auto" onchange="this.form.submit()">
+                            <option value="" th:selected="${selectedGenre == null}">All Genres</option>
+                            <option th:each="g : ${genres}"
+                                    th:value="${g}"
+                                    th:text="${g}"
+                                    th:selected="${g == selectedGenre}">Genre Name</option>
+                        </select>
+
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control" style="max-width: 200px;" placeholder="Search...">
+
+                        <select name="sortField" class="form-select w-auto" onchange="this.form.submit()">
+                            <option value="name" th:selected="${sortField == 'name'}">Sort: Name</option>
+                            <option value="price" th:selected="${sortField == 'price'}">Sort: Price</option>
+                            <option value="quantity" th:selected="${sortField == 'quantity'}">Sort: Qty</option>
+                        </select>
+
+                        <a th:href="@{/books(page=${currentPage}, size=6, sortField=${sortField}, sortDir=${reverseSortDir}, keyword=${keyword}, genre=${selectedGenre})}"
+                           class="btn btn-outline-secondary">
+                            <span th:text="${sortDir == 'asc' ? '⬆️' : '⬇️'}"></span>
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">🔍</button>
+                        <a href="/books" class="btn btn-outline-danger">✖</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(books)}" class="alert alert-warning text-center py-5">
+        <h4>😕 No books found matching your criteria.</h4>
+        <a href="/books" class="btn btn-outline-dark mt-2">Clear Filters</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
         <div class="col" th:each="book : ${books}">
             <div class="card h-100 book-card shadow-sm border-0">
-                <div style="position: relative;">
+                <div class="position-relative overflow-hidden bg-white text-center border-bottom" style="height: 300px;">
                     <img th:src="${book.imageUrl != null ? book.imageUrl : 'https://placehold.co/300x400?text=No+Image'}"
-                         class="card-img-top" alt="Book Cover"
-                         style="height: 300px; object-fit: cover;">
+                         class="img-fluid h-100 w-100" style="object-fit: cover;" alt="Book Cover">
 
-                    <span class="badge bg-dark position-absolute top-0 end-0 m-2" th:text="${book.genre}">Genre</span>
+                    <span class="badge bg-dark position-absolute top-0 end-0 m-2 shadow" th:text="${book.genre}">Genre</span>
                 </div>
 
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-truncate" th:text="${book.name}" th:title="${book.name}">Book Title</h5>
-                    <p class="card-text text-muted small" th:text="${book.author}">Author</p>
+                    <p class="card-text text-muted small mb-1">
+                        by <a th:href="@{/books(keyword=${book.author})}"
+                              class="text-decoration-none text-muted fw-bold"
+                              th:text="${book.author}">Author</a>
+                    </p>
 
-                    <div class="mt-auto d-flex justify-content-between align-items-center">
-                        <h5 class="text-primary mb-0" th:text="${book.price} + ' ₴'">Price</h5>
-                        <small class="text-muted" th:text="'In stock: ' + ${book.quantity}">Qty</small>
+                    <div class="mt-auto pt-3 d-flex justify-content-between align-items-end">
+                        <div>
+                            <span class="fs-5 fw-bold text-primary" th:text="${book.price} + ' ₴'">Price</span>
+                            <div class="small text-muted" th:text="'Stock: ' + ${book.quantity}">Qty</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center mb-2">
-                    <a th:href="@{/books/{name}(name=${book.name})}" class="btn btn-outline-primary btn-sm">Details</a>
+                <div class="card-footer bg-white border-top-0 pb-3 d-flex justify-content-between align-items-center">
+                    <a th:href="@{/books/{name}(name=${book.name})}" class="btn btn-outline-primary btn-sm px-3">Details</a>
 
                     <div th:if="${book.quantity > 0}">
-
                         <form th:action="@{/cart/add}" method="post">
                             <input type="hidden" name="bookId" th:value="${book.id}">
-                            <input type="hidden" name="quantity" value="1"> <button type="submit" class="btn btn-success btn-sm" sec:authorize="isAuthenticated()">
-                            🛒 Add
-                        </button>
+                            <input type="hidden" name="quantity" value="1">
 
+                            <button type="submit" class="btn btn-success btn-sm px-3" sec:authorize="isAuthenticated()">
+                                🛒 Add
+                            </button>
                             <a href="/login" class="btn btn-outline-warning btn-sm" sec:authorize="!isAuthenticated()">
-                                Login to Buy
+                                Login
                             </a>
                         </form>
                     </div>
 
                     <div th:unless="${book.quantity > 0}">
-                        <span class="badge bg-danger">Sold Out</span>
+                        <span class="badge bg-danger p-2">Sold Out</span>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
+
+    <nav aria-label="Page navigation" class="mb-5" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/books(page=0, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">« First</a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/books(page=${currentPage - 1}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">‹ Prev</a>
+            </li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/books(page=${i}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/books(page=${currentPage + 1}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">Next ›</a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/books(page=${totalPages - 1}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">Last »</a>
+            </li>
+        </ul>
+        <div class="text-center text-muted small mt-2">
+            Showing page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
+            (Total books: <span th:text="${totalItems}"></span>)
+        </div>
+    </nav>
+
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

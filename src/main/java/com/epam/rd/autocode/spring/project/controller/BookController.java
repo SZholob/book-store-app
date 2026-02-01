@@ -8,6 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 
 @Controller
@@ -17,10 +23,45 @@ public class BookController {
 
     private final BookService bookService;
 
-    @GetMapping
+    /*@GetMapping
     public String getAllBooks(Model model) {
         model.addAttribute("books", bookService.getAllBooks());
         System.out.println(model.getAttribute("books"));
+        return "books";
+    }*/
+
+    @GetMapping
+    public String getAllBooks(Model model,
+                              @RequestParam(defaultValue = "0") int page,      // Номер сторінки (0 - перша)
+                              @RequestParam(defaultValue = "6") int size,      // Скільки книг на сторінці
+                              @RequestParam(defaultValue = "id") String sortField, // Поле для сортування
+                              @RequestParam(defaultValue = "asc") String sortDir,  // Напрямок (asc/desc)
+                              @RequestParam(required = false) String keyword,
+                              @RequestParam(required = false) String genre) {    // Пошуковий запит
+
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // 2. Отримуємо дані
+        Page<BookDTO> bookPage = bookService.getAllBooks(keyword, genre, pageable);
+
+
+        List<String> genres = bookService.getAllGenres();
+
+        // 3. Закидаємо все в модель
+        model.addAttribute("books", bookPage.getContent());
+        model.addAttribute("genres", genres);// Самі книги
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+        model.addAttribute("totalItems", bookPage.getTotalElements());
+
+        // Потрібно повернути параметри назад на сторінку, щоб перемикачі не "забували" пошук
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedGenre", genre);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "books";
     }
 

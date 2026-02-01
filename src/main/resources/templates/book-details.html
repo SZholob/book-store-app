@@ -15,28 +15,42 @@
                 <img th:src="${book.imageUrl != null ? book.imageUrl : 'https://placehold.co/400x600?text=No+Image'}"
                      class="img-fluid rounded-start w-100" style="height: 100%; object-fit: cover;" alt="...">
             </div>
+
             <div class="col-md-8">
                 <div class="card-body">
                     <h1 class="card-title display-5" th:text="${book.name}">Title</h1>
-                    <h4 class="text-muted mb-3" th:text="'by ' + ${book.author}">Author</h4>
 
-                    <span class="badge bg-info text-dark mb-2" th:text="${book.genre}">Genre</span>
-                    <span class="badge bg-warning text-dark mb-2" th:text="${book.ageGroup}">Age</span>
+                    <h4 class="text-muted mb-3">
+                        by <a th:href="@{/books(keyword=${book.author})}" class="text-decoration-none text-secondary" th:text="${book.author}">Author</a>
+                    </h4>
+
+                    <div class="mb-3">
+                        <span class="badge bg-info text-dark" th:text="${book.genre}">Genre</span>
+                        <span class="badge bg-warning text-dark" th:text="${book.ageGroup}">Age</span>
+
+                        <span class="badge bg-success" th:if="${book.quantity > 5}" th:text="'In Stock: ' + ${book.quantity}"></span>
+                        <span class="badge bg-warning text-dark" th:if="${book.quantity <= 5 && book.quantity > 0}" th:text="'Only ' + ${book.quantity} + ' left!'"></span>
+                        <span class="badge bg-danger" th:if="${book.quantity == 0}">Out of Stock</span>
+                    </div>
 
                     <p class="card-text mt-3" th:text="${book.description}">Description...</p>
 
                     <hr>
                     <div class="row mb-3">
-                        <div class="col-6"><strong>Language:</strong> <span th:text="${book.language}"></span></div>
-                        <div class="col-6"><strong>Pages:</strong> <span th:text="${book.pages}"></span></div>
-                        <div class="col-6"><strong>Published:</strong> <span th:text="${book.publicationDate}"></span></div>
+                        <div class="col-6 mb-2"><strong>Language:</strong> <span th:text="${book.language}"></span></div>
+                        <div class="col-6 mb-2"><strong>Pages:</strong> <span th:text="${book.pages}"></span></div>
+                        <div class="col-6 mb-2"><strong>Published:</strong> <span th:text="${book.publicationDate}"></span></div>
+                        <div class="col-6 mb-2"><strong>Characteristics:</strong> <span th:text="${book.characteristics}"></span></div>
                     </div>
-
                     <div class="d-flex align-items-center bg-light p-3 rounded">
                         <h2 class="text-success mb-0 me-3" th:text="${book.price} + ' UAH'">Price</h2>
 
-                        <form th:action="@{/cart/add}" method="post" class="d-flex ms-auto">
-                            <input type="hidden" name="bookId" th:value="${book.id}"> <input type="number" name="quantity" value="1" min="1" th:max="${book.quantity}" class="form-control me-2" style="width: 80px;">
+                        <form th:action="@{/cart/add}" method="post" class="d-flex ms-auto align-items-center">
+                            <input type="hidden" name="bookId" th:value="${book.id}">
+
+                            <input type="number" name="quantity" value="1" min="1" th:max="${book.quantity}"
+                                   class="form-control me-2" style="width: 80px;"
+                                   th:disabled="${book.quantity == 0}">
 
                             <button type="submit" class="btn btn-success"
                                     sec:authorize="isAuthenticated()"
@@ -48,7 +62,7 @@
                         </form>
                     </div>
 
-                    <div class="mt-2 text-danger" th:if="${book.quantity == 0}">
+                    <div class="mt-2 text-danger fw-bold" th:if="${book.quantity == 0}">
                         Currently Out of Stock!
                     </div>
                 </div>
