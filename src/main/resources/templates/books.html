@@ -31,6 +31,10 @@
                     </a>
                 </li>
 
+                <li class="nav-item me-2" sec:authorize="hasRole('CUSTOMER')">
+                    <a href="/orders/my" class="btn btn-info">📦 My Orders</a>
+                </li>
+
                 <li class="nav-item me-2" sec:authorize="hasRole('EMPLOYEE')">
                     <a href="/books/add" class="btn btn-success">+ Add Book</a>
                 </li>

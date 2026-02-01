@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.dto;
 
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,5 @@ public class OrderDTO{
     private LocalDateTime orderDate;
     private BigDecimal price;
     private List<BookItemDTO> bookItems;
+    private OrderStatus status;
 }

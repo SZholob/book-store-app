@@ -5,11 +5,14 @@ import com.epam.rd.autocode.spring.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
@@ -28,5 +31,13 @@ public class OrderController {
     @GetMapping("/employee/{email}")
     private ResponseEntity<List<OrderDTO>> getOderByEmployee(@PathVariable String email){
         return ResponseEntity.ok(orderService.getOrdersByEmployee(email));
+    }
+
+    @GetMapping("/my")
+    public String getMyOrders(Model model, Principal principal) {
+        String email = principal.getName();
+        List<OrderDTO> orders = orderService.getOrdersByClient(email);
+        model.addAttribute("orders", orders);
+        return "my-orders";
     }
 }

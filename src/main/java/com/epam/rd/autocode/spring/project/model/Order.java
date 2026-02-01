@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.model;
 
 
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,4 +37,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<BookItem> bookItems;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
 }

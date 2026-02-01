@@ -5,6 +5,7 @@ import com.epam.rd.autocode.spring.project.dto.CartItem;
 import com.epam.rd.autocode.spring.project.dto.OrderDTO;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.*;
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import com.epam.rd.autocode.spring.project.repo.*;
 import com.epam.rd.autocode.spring.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO addOrder(OrderDTO orderDTO) {
         Order order = new Order();
+        order.setStatus(OrderStatus.NEW);
         order.setOrderDate(LocalDateTime.now());
 
 
@@ -54,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (orderDTO.getEmployeeEmail() != null){
             Employee employee = employeeRepository.findByEmail(orderDTO.getEmployeeEmail())
-                    .orElseThrow(()->new NotFoundException("Client not found: " + orderDTO.getEmployeeEmail()));
+                    .orElseThrow(()->new NotFoundException("Employee not found: " + orderDTO.getEmployeeEmail()));
             order.setEmployee(employee);
         }
 
@@ -92,6 +94,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setClient(client);
         order.setOrderDate(LocalDateTime.now());
+        order.setStatus(OrderStatus.NEW);
         order.setPrice(BigDecimal.ZERO);
 
         Order savedOrder = orderRepository.save(order);
@@ -144,6 +147,7 @@ public class OrderServiceImpl implements OrderService {
         }
         dto.setOrderDate(order.getOrderDate());
         dto.setPrice(order.getPrice());
+        dto.setStatus(order.getStatus());
 
         List<BookItemDTO> itemDTOs = order.getBookItems().stream()
                 .map(item -> new BookItemDTO(item.getBook().getName(), item.getQuantity()))
