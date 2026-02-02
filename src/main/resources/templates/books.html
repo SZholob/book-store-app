@@ -25,7 +25,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav ms-auto align-items-center">
 
-                <li class="nav-item me-2" sec:authorize="isAuthenticated()">
+                <li class="nav-item me-2" sec:authorize="hasRole('CUSTOMER')">
                     <a href="/cart" class="btn btn-warning position-relative">
                         🛒 Cart
                     </a>
@@ -35,8 +35,18 @@
                     <a href="/orders/my" class="btn btn-info">📦 My Orders</a>
                 </li>
 
+                <li class="nav-item me-2" sec:authorize="hasRole('CUSTOMER')">
+                    <a href="/profile" class="btn btn-primary position-relative">
+                        👤 My Profile
+                    </a>
+                </li>
+
                 <li class="nav-item me-2" sec:authorize="hasRole('EMPLOYEE')">
                     <a href="/books/add" class="btn btn-success">+ Add Book</a>
+                </li>
+
+                <li class="nav-item me-2" sec:authorize="hasRole('EMPLOYEE')">
+                    <a href="/employee/orders" class="btn btn-dark">🛠️ Admin Panel</a>
                 </li>
 
                 <li class="nav-item" sec:authorize="isAuthenticated()">

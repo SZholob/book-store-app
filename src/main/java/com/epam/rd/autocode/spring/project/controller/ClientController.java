@@ -7,20 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/clients")
 @RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
-
-    @GetMapping
-    public ResponseEntity<List<ClientDTO>> getAllClients() {
-        return ResponseEntity.ok(clientService.getAllClients());
-    }
-
     @GetMapping("/{email}")
     public ResponseEntity<ClientDTO> getClientsByEmail(@PathVariable String email) {
         return ResponseEntity.ok(clientService.getClientByEmail(email));

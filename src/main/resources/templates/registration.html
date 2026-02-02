@@ -22,7 +22,7 @@
         </p>
         <p>
             <label>Password:</label>
-            <input type="password" th:field="*{password}" required/>
+            <input type="password" th:field="*{password}" required minlength="8"/>
             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red"></span>
         </p>
         <input type="hidden" name="balance" value="0"/>

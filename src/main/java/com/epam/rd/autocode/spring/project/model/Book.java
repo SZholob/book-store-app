@@ -43,6 +43,7 @@ public class Book {
 
     private String characteristics;
 
+    @Column(length = 2000)
     private String description;
 
     @Enumerated(EnumType.STRING)

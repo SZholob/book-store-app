@@ -56,6 +56,51 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public void blockClient(String email) {
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
+
+        client.setBlocked(true);
+        clientRepository.save(client);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public void unblockClient(String email) {
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
+        client.setBlocked(false);
+        clientRepository.save(client);
+    }
+
+    @Override
+    @Transactional
+    public ClientDTO updateMyProfile(String email, ClientDTO clientDTO) {
+        Client existingClient = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found: " + email));
+
+        existingClient.setName(clientDTO.getName());
+
+        if (clientDTO.getPassword() != null && !clientDTO.getPassword().isBlank()) {
+            existingClient.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
+        }
+
+        Client savedClient = clientRepository.save(existingClient);
+        return modelMapper.map(savedClient, ClientDTO.class);
+    }
+
+    @Override
+    public void deleteMyAccount(String email) {
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found: " + email));
+
+        clientRepository.delete(client);
+    }
+
+    @Override
+    @Transactional
     public ClientDTO updateClientByEmail(String email, ClientDTO clientDTO) {
         Client existingClient = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Client not found: " + email));

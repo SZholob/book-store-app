@@ -2,10 +2,7 @@ package com.epam.rd.autocode.spring.project.dto;
 
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
 import com.epam.rd.autocode.spring.project.model.enums.Language;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,6 +37,8 @@ public class BookDTO{
     private Integer pages;
 
     private String characteristics;
+
+    @Size(max = 2000, message = "Description is too long (max 2000 characters)")
     private String description;
     private Language language;
     private String imageUrl;

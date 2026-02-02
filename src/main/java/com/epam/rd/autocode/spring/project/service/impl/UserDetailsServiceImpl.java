@@ -37,9 +37,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails buildUserDetails(User user) {
+        boolean isBlocked = false;
+        if (user instanceof Client){
+            isBlocked = ((Client) user).isBlocked();
+        }
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
+                true, true, true,
+                !isBlocked,
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
         );
     }

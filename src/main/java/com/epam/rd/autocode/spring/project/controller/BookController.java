@@ -1,12 +1,16 @@
 package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
+import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
+import com.epam.rd.autocode.spring.project.model.enums.Language;
 import com.epam.rd.autocode.spring.project.service.BookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,39 +27,32 @@ public class BookController {
 
     private final BookService bookService;
 
-    /*@GetMapping
-    public String getAllBooks(Model model) {
-        model.addAttribute("books", bookService.getAllBooks());
-        System.out.println(model.getAttribute("books"));
-        return "books";
-    }*/
-
     @GetMapping
     public String getAllBooks(Model model,
                               @RequestParam(defaultValue = "0") int page,      // Номер сторінки (0 - перша)
                               @RequestParam(defaultValue = "6") int size,      // Скільки книг на сторінці
                               @RequestParam(defaultValue = "id") String sortField, // Поле для сортування
                               @RequestParam(defaultValue = "asc") String sortDir,  // Напрямок (asc/desc)
-                              @RequestParam(required = false) String keyword,
-                              @RequestParam(required = false) String genre) {    // Пошуковий запит
+                              @RequestParam(required = false) String keyword,       // Пошуковий запит
+                              @RequestParam(required = false) String genre) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // 2. Отримуємо дані
+
         Page<BookDTO> bookPage = bookService.getAllBooks(keyword, genre, pageable);
 
 
         List<String> genres = bookService.getAllGenres();
 
-        // 3. Закидаємо все в модель
+
         model.addAttribute("books", bookPage.getContent());
-        model.addAttribute("genres", genres);// Самі книги
+        model.addAttribute("genres", genres);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", bookPage.getTotalPages());
         model.addAttribute("totalItems", bookPage.getTotalElements());
 
-        // Потрібно повернути параметри назад на сторінку, щоб перемикачі не "забували" пошук
+
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("keyword", keyword);
@@ -72,23 +69,35 @@ public class BookController {
         return "book-details";
     }
 
-    /*@GetMapping("/{name}")
-    public ResponseEntity<BookDTO> getBookByName(@PathVariable String name){
-        return ResponseEntity.ok(bookService.getBookByName(name));
-    }*/
 
     @GetMapping("/add")
     @PreAuthorize("hasRole('EMPLOYEE')")
     public String showAddBookForm(Model model) {
         model.addAttribute("book", new BookDTO());
+        model.addAttribute("languages", Language.values());
+        model.addAttribute("ageGroups", AgeGroup.values());
         return "book-add";
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public String addBook(@ModelAttribute BookDTO bookDTO) {
-        bookService.addBook(bookDTO);
-        return "redirect:/books";
+    public String addBook(@Valid @ModelAttribute("book") BookDTO bookDTO,
+                          BindingResult bindingResult,
+                          Model model) {
+        if (bindingResult.hasErrors()){
+            model.addAttribute("languages", Language.values());
+            model.addAttribute("ageGroups", AgeGroup.values());
+            return "book-add";
+        }
+        try {
+            bookService.addBook(bookDTO);
+            return "redirect:/books";
+        }catch (Exception e){
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("languages", Language.values());
+            model.addAttribute("ageGroups", AgeGroup.values());
+            return "book-add";
+        }
     }
 
     @PatchMapping("/{name}")

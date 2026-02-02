@@ -20,11 +20,11 @@
     <form th:action="@{/login}" method="post">
         <p>
             <label>Email:</label>
-            <input type="text" name="username" required placeholder="Enter email"/>
+            <input type="email" name="username" required placeholder="Enter email"/>
         </p>
         <p>
             <label>Password:</label>
-            <input type="password" name="password" required placeholder="Enter password"/>
+            <input type="password" name="password" required minlength="8" placeholder="Enter password"/>
         </p>
         <button type="submit">Sign In</button>
     </form>

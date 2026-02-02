@@ -48,6 +48,7 @@ public class SecurityConfig{
 
                         // Клієнти
                         .requestMatchers("/orders/**").hasRole("CUSTOMER")
+                        .requestMatchers("/profile/**").authenticated()
 
                         .anyRequest().authenticated()
                 )

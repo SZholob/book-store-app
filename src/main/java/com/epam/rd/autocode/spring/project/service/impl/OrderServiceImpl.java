@@ -9,13 +9,16 @@ import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import com.epam.rd.autocode.spring.project.repo.*;
 import com.epam.rd.autocode.spring.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -85,62 +88,92 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void createOrderFromCart(List<CartItem> cart) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
         Client client = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Client not found: " + email));
 
-        Order order = new Order();
-        order.setClient(client);
-        order.setOrderDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.NEW);
-        order.setPrice(BigDecimal.ZERO);
-
-        Order savedOrder = orderRepository.save(order);
-
-        BigDecimal finalPrice = BigDecimal.ZERO;
+        BigDecimal totalOrderPrice = BigDecimal.ZERO;
 
         for (CartItem item : cart) {
             Book book = bookRepository.findById(item.getBookId())
                     .orElseThrow(() -> new NotFoundException("Book not found: " + item.getBookId()));
 
-
             if (book.getQuantity() < item.getQuantity()) {
                 throw new RuntimeException("Not enough stock for book: " + book.getName());
             }
 
+            BigDecimal itemTotal = book.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            totalOrderPrice = totalOrderPrice.add(itemTotal);
+        }
+
+        if (client.getBalance().compareTo(totalOrderPrice) < 0) {
+            throw new RuntimeException("Insufficient funds! Balance: " + client.getBalance() + ", Total: " + totalOrderPrice);
+        }
+
+        Order order = new Order();
+        order.setClient(client);
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(OrderStatus.NEW);
+        order.setPrice(totalOrderPrice);
+
+        Order savedOrder = orderRepository.save(order);
+
+        for (CartItem item : cart) {
+            Book book = bookRepository.findById(item.getBookId()).get();
 
             book.setQuantity(book.getQuantity() - item.getQuantity());
             bookRepository.save(book);
-
 
             BookItem bookItem = new BookItem();
             bookItem.setOrder(savedOrder);
             bookItem.setBook(book);
             bookItem.setQuantity(item.getQuantity());
             bookItemRepository.save(bookItem);
-
-
-            BigDecimal itemTotal = book.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-            finalPrice = finalPrice.add(itemTotal);
-
-
-            if (client.getBalance().compareTo(finalPrice) < 0) {
-                throw new RuntimeException("Insufficient funds! Balance: " + client.getBalance() + ", Total: " + finalPrice);
-            }
-            client.setBalance(client.getBalance().subtract(finalPrice));
-            clientRepository.save(client);
         }
 
-        savedOrder.setPrice(finalPrice);
-        orderRepository.save(savedOrder);
+        client.setBalance(client.getBalance().subtract(totalOrderPrice));
+        clientRepository.save(client);
     }
 
+    @Override
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public List<OrderDTO> getAllOrders(String statusStr, String clientEmail) {
+        List<Order> orders;
+
+        if (clientEmail != null && !clientEmail.isEmpty()) {
+            orders = orderRepository.findAllByClientEmail(clientEmail);
+        }
+        else if (statusStr != null && !statusStr.isEmpty()) {
+            OrderStatus status = OrderStatus.valueOf(statusStr);
+            orders = orderRepository.findAllByStatus(status);
+        }
+
+        else {
+            orders = orderRepository.findAll();
+        }
+
+        return orders.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public void updateOrderStatus(Long id, OrderStatus status) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Order not found: " + id));
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
 
 
     private OrderDTO mapToDTO(Order order) {
         OrderDTO dto = new OrderDTO();
+        dto.setId(order.getId());
+        dto.setStatus(order.getStatus());
         dto.setClientEmail(order.getClient().getEmail());
         if (order.getEmployee() != null){
             dto.setEmployeeEmail(order.getEmployee().getEmail());
