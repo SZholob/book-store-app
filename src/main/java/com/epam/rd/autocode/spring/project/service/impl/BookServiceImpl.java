@@ -24,13 +24,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
 
-    /*@Override
-    public List<BookDTO> getAllBooks() {
-        return bookRepository.findAll()
-                .stream()
-                .map(book -> modelMapper.map(book, BookDTO.class))
-                .collect(Collectors.toList());
-    }*/
+
 
     @Override
     public Page<BookDTO> getAllBooks(String keyword, String genre, Pageable pageable) {
