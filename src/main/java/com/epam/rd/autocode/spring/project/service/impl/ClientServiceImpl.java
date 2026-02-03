@@ -16,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
@@ -29,8 +27,16 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public Page<ClientDTO> getAllClients(Pageable pageable) {
-        Page<Client> clientPage = clientRepository.findAll(pageable);
+    public Page<ClientDTO> getAllClients(String keyword, Boolean isBlocked, Pageable pageable) {
+        Page<Client> clientPage;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            clientPage = clientRepository.findByEmailContainingIgnoreCaseOrNameContainingIgnoreCase(keyword, keyword, pageable);
+        } else if (isBlocked != null){
+            clientPage = clientRepository.findByIsBlocked(isBlocked, pageable);
+        } else {
+            clientPage = clientRepository.findAll(pageable);
+        }
 
         return clientPage.map(client -> modelMapper.map(client, ClientDTO.class));
     }

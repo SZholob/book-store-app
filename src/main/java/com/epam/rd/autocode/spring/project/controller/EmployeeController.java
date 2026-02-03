@@ -36,15 +36,19 @@ public class EmployeeController {
     @GetMapping("/clients")
     public String getAllClients(Model model,
                                 @RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "10") int size) {
+                                @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(required = false) String keyword,
+                                @RequestParam(required = false) Boolean isBlocked) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<ClientDTO> clientPage = clientService.getAllClients(pageable);
+        Page<ClientDTO> clientPage = clientService.getAllClients(keyword, isBlocked, pageable);
 
         model.addAttribute("clients", clientPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", clientPage.getTotalPages());
         model.addAttribute("totalItems", clientPage.getTotalElements());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("isBlocked", isBlocked);
         return "employee-clients";
     }
 
@@ -89,18 +93,21 @@ public class EmployeeController {
     }
 
     @GetMapping("/books")
-    public String manageBooks(Model model,@RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size) {
+    public String manageBooks(Model model,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size,
+                              @RequestParam(required = false) String keyword) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<BookDTO> bookPage = bookService.getAllBooks(null, null, pageable);
+        Page<BookDTO> bookPage = bookService.getAllBooks(keyword, null, pageable);
 
 
         model.addAttribute("books", bookPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", bookPage.getTotalPages());
         model.addAttribute("totalItems", bookPage.getTotalElements());
+        model.addAttribute("keyword", keyword);
 
         return "employee-books";
     }

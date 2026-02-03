@@ -15,4 +15,8 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Override
     Page<Client> findAll(@NonNull Pageable pageable);
+
+    Page<Client> findByEmailContainingIgnoreCaseOrNameContainingIgnoreCase(String email, String name, Pageable pageable);
+
+    Page<Client> findByIsBlocked(boolean isBlocked, Pageable pageable);
 }

@@ -10,26 +10,26 @@
 
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Orders Manager</h2>
+        <h2>Order Manager</h2>
 
         <form action="/employee/orders" method="get" class="d-flex gap-2 align-items-center bg-white p-2 rounded shadow-sm">
 
-            <div th:if="${selectedEmail != null}">
-                <span class="fw-bold me-2">Client:</span>
-                <span class="badge bg-info text-dark" th:text="${selectedEmail}">email</span>
-                <a href="/employee/orders" class="btn btn-sm btn-close ms-2" aria-label="Close"></a>
-                <input type="hidden" name="clientEmail" th:value="${selectedEmail}">
-            </div>
+            <input type="text" name="clientEmail" class="form-control"
+                   placeholder="Client Email..."
+                   th:value="${selectedEmail}">
 
-            <div class="vr mx-2" th:if="${selectedEmail != null}"></div>
+            <div class="vr mx-2"></div>
 
-            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+            <select name="status" class="form-select w-auto" onchange="this.form.submit()">
                 <option value="" th:selected="${selectedStatus == null}">All Statuses</option>
                 <option th:each="s : ${statuses}"
                         th:value="${s}"
                         th:text="${s}"
                         th:selected="${s.name() == selectedStatus}"></option>
             </select>
+
+            <button class="btn btn-primary" type="submit">Search</button>
+            <a href="/employee/orders" class="btn btn-outline-secondary">Reset</a>
         </form>
     </div>
 
