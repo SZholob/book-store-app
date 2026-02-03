@@ -1,13 +1,18 @@
 package com.epam.rd.autocode.spring.project.controller;
 
+import com.epam.rd.autocode.spring.project.dto.BookDTO;
 import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
 import com.epam.rd.autocode.spring.project.dto.OrderDTO;
 import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
+import com.epam.rd.autocode.spring.project.service.BookService;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import com.epam.rd.autocode.spring.project.service.EmployeeService;
 import com.epam.rd.autocode.spring.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,6 +30,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final ClientService clientService;
     private final OrderService orderService;
+    private final BookService bookService;
 
 
     @GetMapping("/clients")
@@ -66,6 +72,23 @@ public class EmployeeController {
     public String updateOrderStatus(@PathVariable Long id, @RequestParam OrderStatus status) {
         orderService.updateOrderStatus(id, status);
         return "redirect:/employee/orders";
+    }
+
+    @GetMapping("/books")
+    public String manageBooks(Model model,@RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<BookDTO> bookPage = bookService.getAllBooks(null, null, pageable);
+
+
+        model.addAttribute("books", bookPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+        model.addAttribute("totalItems", bookPage.getTotalElements());
+
+        return "employee-books";
     }
 
     @GetMapping

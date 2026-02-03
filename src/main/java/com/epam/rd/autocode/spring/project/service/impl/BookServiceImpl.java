@@ -14,9 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,11 +73,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDTO updateBookByName(String name, BookDTO bookDTO) {
-        Book existingBook = bookRepository.findByName(name)
-                .orElseThrow(() -> new NotFoundException("Book not found with name: " + name));
+    public BookDTO updateBook(Long id, BookDTO bookDTO) {
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Book not found with id: " + id));
 
         modelMapper.map(bookDTO, existingBook);
+        existingBook.setId(id);
 
         Book updatedBook = bookRepository.save(existingBook);
         return modelMapper.map(updatedBook, BookDTO.class);

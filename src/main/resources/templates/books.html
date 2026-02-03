@@ -14,55 +14,7 @@
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/books">📚 BookStore</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav ms-auto align-items-center">
-
-                <li class="nav-item me-2" sec:authorize="hasRole('CUSTOMER')">
-                    <a href="/cart" class="btn btn-warning position-relative">
-                        🛒 Cart
-                    </a>
-                </li>
-
-                <li class="nav-item me-2" sec:authorize="hasRole('CUSTOMER')">
-                    <a href="/orders/my" class="btn btn-info">📦 My Orders</a>
-                </li>
-
-                <li class="nav-item me-2" sec:authorize="hasRole('CUSTOMER')">
-                    <a href="/profile" class="btn btn-primary position-relative">
-                        👤 My Profile
-                    </a>
-                </li>
-
-                <li class="nav-item me-2" sec:authorize="hasRole('EMPLOYEE')">
-                    <a href="/books/add" class="btn btn-success">+ Add Book</a>
-                </li>
-
-                <li class="nav-item me-2" sec:authorize="hasRole('EMPLOYEE')">
-                    <a href="/employee/orders" class="btn btn-dark">🛠️ Admin Panel</a>
-                </li>
-
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a href="/logout" class="btn btn-outline-light">Logout</a>
-                </li>
-
-                <li class="nav-item me-2" sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="btn btn-light">Login</a>
-                </li>
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a href="/registration" class="btn btn-outline-light">Register</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/navbar :: header}"></div>
 
 <div class="container flex-grow-1">
 
@@ -139,13 +91,17 @@
 
                 <div class="card-footer bg-white border-top-0 pb-3 d-flex justify-content-between align-items-center">
                     <a th:href="@{/books/{name}(name=${book.name})}" class="btn btn-outline-primary btn-sm px-3">Details</a>
-
+                    <a sec:authorize="hasRole('EMPLOYEE')"
+                       th:href="@{/books/edit/{id}(id=${book.id})}"
+                       class="btn btn-warning btn-sm">
+                        ✏️ Edit
+                    </a>
                     <div th:if="${book.quantity > 0}">
                         <form th:action="@{/cart/add}" method="post">
                             <input type="hidden" name="bookId" th:value="${book.id}">
                             <input type="hidden" name="quantity" value="1">
 
-                            <button type="submit" class="btn btn-success btn-sm px-3" sec:authorize="isAuthenticated()">
+                            <button type="submit" class="btn btn-success btn-sm px-3" sec:authorize="hasRole('CUSTOMER')">
                                 🛒 Add
                             </button>
                             <a href="/login" class="btn btn-outline-warning btn-sm" sec:authorize="!isAuthenticated()">
@@ -162,37 +118,7 @@
         </div>
     </div>
 
-    <nav aria-label="Page navigation" class="mb-5" th:if="${totalPages > 1}">
-        <ul class="pagination justify-content-center">
-
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/books(page=0, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">« First</a>
-            </li>
-
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/books(page=${currentPage - 1}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">‹ Prev</a>
-            </li>
-
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link"
-                   th:href="@{/books(page=${i}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}"
-                   th:text="${i + 1}">1</a>
-            </li>
-
-            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link" th:href="@{/books(page=${currentPage + 1}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">Next ›</a>
-            </li>
-
-            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link" th:href="@{/books(page=${totalPages - 1}, size=6, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}">Last »</a>
-            </li>
-        </ul>
-        <div class="text-center text-muted small mt-2">
-            Showing page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
-            (Total books: <span th:text="${totalItems}"></span>)
-        </div>
-    </nav>
+    <div th:replace="~{fragments/pageNavigation :: pager(baseUrl='/books')}"></div>
 
 </div>
 

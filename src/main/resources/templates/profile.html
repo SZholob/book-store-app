@@ -6,16 +6,7 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/books">📚 BookStore</a>
-        <div class="navbar-nav ms-auto">
-            <a href="/cart" class="btn btn-outline-warning me-2">🛒 Cart</a>
-            <a href="/orders/my" class="btn btn-outline-info me-2">📦 My Orders</a>
-            <a href="/logout" class="btn btn-danger">Logout</a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{fragments/navbar :: header}"></div>
 
 <div class="container">
     <div class="row justify-content-center">

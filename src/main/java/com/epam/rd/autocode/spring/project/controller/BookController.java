@@ -100,14 +100,43 @@ public class BookController {
         }
     }
 
-    @PatchMapping("/{name}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable String name, @RequestBody BookDTO bookDTO){
-        return ResponseEntity.ok(bookService.updateBookByName(name, bookDTO));
+    @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public String showEditBookForm(@PathVariable Long id, Model model) {
+        BookDTO book = bookService.getBookById(id);
+
+        model.addAttribute("book", book);
+        model.addAttribute("languages", Language.values());
+        model.addAttribute("ageGroups", AgeGroup.values());
+
+        return "book-edit";
     }
 
-    @DeleteMapping("/{name}")
-    public ResponseEntity<Void> deleteBook(@PathVariable String name){
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public String updateBook(@Valid @ModelAttribute("book") BookDTO bookDTO,
+                                              BindingResult bindingResult,
+                                              Model model){
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("languages", Language.values());
+            model.addAttribute("ageGroups", AgeGroup.values());
+            return "book-edit";
+        }
+        try {
+            bookService.updateBook(bookDTO.getId(), bookDTO);
+            return "redirect:/books";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("languages", Language.values());
+            model.addAttribute("ageGroups", AgeGroup.values());
+            return "book-edit";
+        }
+    }
+
+    @PostMapping("/delete/{name}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public String deleteBook(@PathVariable String name){
         bookService.deleteBookByName(name);
-        return ResponseEntity.noContent().build();
+        return "redirect:/employee/books";
     }
 }

@@ -103,7 +103,7 @@ public class BookServiceImplTest {
         when(bookRepository.save(book)).thenReturn(book);
         when(modelMapper.map(book, BookDTO.class)).thenReturn(dto);
 
-        bookService.updateBookByName(name, dto);
+        bookService.updateBook(, name, dto);
 
         verify(modelMapper).map(dto, book);
         verify(bookRepository).save(book);
