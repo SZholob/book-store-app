@@ -9,6 +9,8 @@ import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import com.epam.rd.autocode.spring.project.repo.*;
 import com.epam.rd.autocode.spring.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,19 +33,17 @@ public class OrderServiceImpl implements OrderService {
     private final BookItemRepository bookItemRepository;
 
     @Override
-    public List<OrderDTO> getOrdersByClient(String email) {
-        return orderRepository.findAllByClientEmail(email)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    public Page<OrderDTO> getOrdersByClient(String email, Pageable pageable) {
+        Page<Order> orderPage;
+        orderPage = orderRepository.findAllByClientEmail(email, pageable);
+        return orderPage.map(this::mapToDTO);
     }
 
     @Override
-    public List<OrderDTO> getOrdersByEmployee(String employeeEmail) {
-        return orderRepository.findAllByEmployeeEmail(employeeEmail)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+    public Page<OrderDTO> getOrdersByEmployee(String employeeEmail, Pageable pageable) {
+        Page<Order> orderPage;
+        orderPage = orderRepository.findAllByEmployeeEmail(employeeEmail, pageable);
+        return orderPage.map(this::mapToDTO);
     }
 
     @Override
@@ -139,24 +139,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public List<OrderDTO> getAllOrders(String statusStr, String clientEmail) {
-        List<Order> orders;
+    public Page<OrderDTO> getAllOrders(String statusStr, String clientEmail, Pageable pageable) {
+        Page<Order> orders;
 
         if (clientEmail != null && !clientEmail.isEmpty()) {
-            orders = orderRepository.findAllByClientEmail(clientEmail);
+            orders = orderRepository.findAllByClientEmail(clientEmail, pageable);
         }
         else if (statusStr != null && !statusStr.isEmpty()) {
             OrderStatus status = OrderStatus.valueOf(statusStr);
-            orders = orderRepository.findAllByStatus(status);
+            orders = orderRepository.findAllByStatus(status, pageable);
         }
 
         else {
-            orders = orderRepository.findAll();
+            orders = orderRepository.findAll(pageable);
         }
-
-        return orders.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return orders.map(this::mapToDTO);
     }
 
     @Override

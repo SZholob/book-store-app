@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="pager(baseUrl)" aria-label="Page navigation" th:if="${totalPages > 0}">
+  <ul class="pagination justify-content-center">
+
+    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+      <a class="page-link"
+         th:href="@{${baseUrl}(page=0, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
+        « First
+      </a>
+    </li>
+
+    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+      <a class="page-link"
+         th:href="@{${baseUrl}(page=${currentPage - 1}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
+        ‹ Prev
+      </a>
+    </li>
+
+    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+        th:classappend="${i == currentPage} ? 'active'">
+      <a class="page-link"
+         th:href="@{${baseUrl}(page=${i}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}"
+         th:text="${i + 1}">1</a>
+    </li>
+
+    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+      <a class="page-link"
+         th:href="@{${baseUrl}(page=${currentPage + 1}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
+        Next ›
+      </a>
+    </li>
+
+    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+      <a class="page-link"
+         th:href="@{${baseUrl}(page=${totalPages - 1}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
+        Last »
+      </a>
+    </li>
+  </ul>
+
+  <div class="text-center text-muted small mt-2">
+    Showing page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
+    (Total items: <span th:text="${totalItems}"></span>)
+  </div>
+</nav>
+
+</body>
+</html>

@@ -1,12 +1,12 @@
 package com.epam.rd.autocode.spring.project.service;
 
 import com.epam.rd.autocode.spring.project.dto.ClientDTO;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ClientService {
 
-    List<ClientDTO> getAllClients();
+    Page<ClientDTO> getAllClients(Pageable pageable);
 
     ClientDTO getClientByEmail(String email);
 
@@ -20,7 +20,7 @@ public interface ClientService {
 
     void unblockClient(String email);
 
-    ClientDTO updateMyProfile(String email, ClientDTO clientDTO);
+    void updateMyProfile(String email, ClientDTO clientDTO);
 
     void deleteMyAccount(String email);
 }

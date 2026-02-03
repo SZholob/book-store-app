@@ -2,18 +2,18 @@ package com.epam.rd.autocode.spring.project.repo;
 
 import com.epam.rd.autocode.spring.project.model.Order;
 import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findAllByClientEmail(String email);
+    Page<Order> findAllByClientEmail(String email, Pageable pageable);
 
-    List<Order> findAllByEmployeeEmail(String email);
+    Page<Order> findAllByEmployeeEmail(String email, Pageable pageable);
 
-    List<Order> findAllByStatus(OrderStatus status);
+    Page<Order> findAllByStatus(OrderStatus status, Pageable pageable);
 
 }

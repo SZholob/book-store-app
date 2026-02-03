@@ -9,12 +9,13 @@ import com.epam.rd.autocode.spring.project.repo.ClientRepository;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +29,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public List<ClientDTO> getAllClients() {
-        return clientRepository.findAll().stream()
-                .map(client -> modelMapper.map(client, ClientDTO.class))
-                .collect(Collectors.toList());
+    public Page<ClientDTO> getAllClients(Pageable pageable) {
+        Page<Client> clientPage = clientRepository.findAll(pageable);
+
+        return clientPage.map(client -> modelMapper.map(client, ClientDTO.class));
     }
 
     @Override
@@ -77,7 +78,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     @Transactional
-    public ClientDTO updateMyProfile(String email, ClientDTO clientDTO) {
+    public void updateMyProfile(String email, ClientDTO clientDTO) {
         Client existingClient = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found: " + email));
 
@@ -88,7 +89,7 @@ public class ClientServiceImpl implements ClientService {
         }
 
         Client savedClient = clientRepository.save(existingClient);
-        return modelMapper.map(savedClient, ClientDTO.class);
+        modelMapper.map(savedClient, ClientDTO.class);
     }
 
     @Override

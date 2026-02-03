@@ -34,9 +34,17 @@ public class EmployeeController {
 
 
     @GetMapping("/clients")
-    public String getAllClients(Model model) {
-        List<ClientDTO> clients = clientService.getAllClients();
-        model.addAttribute("clients", clients);
+    public String getAllClients(Model model,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ClientDTO> clientPage = clientService.getAllClients(pageable);
+
+        model.addAttribute("clients", clientPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", clientPage.getTotalPages());
+        model.addAttribute("totalItems", clientPage.getTotalElements());
         return "employee-clients";
     }
 
@@ -55,12 +63,18 @@ public class EmployeeController {
     @GetMapping("/orders")
     public String getAllOrders(Model model,
                                @RequestParam(required = false) String status,
-                               @RequestParam(required = false) String clientEmail) {
+                               @RequestParam(required = false) String clientEmail,
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "6") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrderDTO> orderPage = orderService.getAllOrders(status, clientEmail, pageable);
 
-        List<OrderDTO> orders = orderService.getAllOrders(status, clientEmail);
+        model.addAttribute("orders", orderPage.getContent());
 
-        model.addAttribute("orders", orders);
         model.addAttribute("statuses", OrderStatus.values());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+        model.addAttribute("totalItems", orderPage.getTotalElements());
 
         model.addAttribute("selectedStatus", status);
         model.addAttribute("selectedEmail", clientEmail);
