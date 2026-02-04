@@ -18,6 +18,7 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/profile")
+@PreAuthorize("hasRole('CUSTOMER')")
 @RequiredArgsConstructor
 public class ProfileController {
 
@@ -41,7 +42,6 @@ public class ProfileController {
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasRole('CUSTOMER')")
     public String deleteAccount(Principal principal, HttpServletRequest request) {
         clientService.deleteMyAccount(principal.getName());
 

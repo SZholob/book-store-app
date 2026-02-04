@@ -62,16 +62,22 @@
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle text-white fw-bold" href="#" role="button" data-bs-toggle="dropdown">
                         👤
-                        <span th:text="${currentUser != null ? currentUser.name : 'User'}">
-                            <span th:text="#{navbar.profile}">Profile</span>
-                        </span>
+                        <span th:text="${currentUser != null ? currentUser.name : 'User'}">Profile</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
+
                         <li>
                             <a class="dropdown-item" sec:authorize="hasRole('CUSTOMER')" href="/profile">
                                 <span th:text="#{navbar.myProfile}">My Profile</span>
                             </a>
                         </li>
+
+                        <li>
+                            <a class="dropdown-item" sec:authorize="hasRole('EMPLOYEE')" href="/employees/profile">
+                                <span>Employee Profile</span>
+                            </a>
+                        </li>
+
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="/logout">

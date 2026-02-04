@@ -19,9 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/employees")
 @PreAuthorize("hasRole('EMPLOYEE')")
 @RequiredArgsConstructor
@@ -29,13 +30,19 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @GetMapping
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees(){
-        return ResponseEntity.ok(employeeService.getAllEmployees());
+    @GetMapping("/profile")
+    public String myProfile(Model model, Principal principal) {
+        EmployeeDTO employee = employeeService.getEmployeeByEmail(principal.getName());
+        employee.setPassword("");
+        model.addAttribute("employee", employee);
+        return "employee-profile";
     }
 
-    @PostMapping
-    public ResponseEntity<EmployeeDTO> addEmployee(@RequestBody EmployeeDTO employeeDTO){
-        return ResponseEntity.ok(employeeService.addEmployee(employeeDTO));
+    @PostMapping("/profile/update")
+    public String updateProfile(@ModelAttribute("employee") EmployeeDTO employeeDTO, Principal principal) {
+
+        employeeService.updateEmployeeByEmail(principal.getName(), employeeDTO);
+        return "redirect:/employees/profile?success";
     }
+
 }
