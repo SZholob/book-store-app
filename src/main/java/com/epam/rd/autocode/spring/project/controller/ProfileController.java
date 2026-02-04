@@ -4,11 +4,13 @@ import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +38,20 @@ public class ProfileController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(@ModelAttribute("client") ClientDTO clientDTO, Principal principal) {
+    public String updateProfile(@Valid @ModelAttribute("client") ClientDTO clientDTO,
+                                BindingResult bindingResult,
+                                Principal principal) {
+        if (bindingResult.hasErrors()){
+            try {
+                ClientDTO dbClient = clientService.getClientByEmail(principal.getName());
+                clientDTO.setBalance(dbClient.getBalance());
+                clientDTO.setEmail(dbClient.getEmail());
+            } catch (Exception e) {
+                return "profile";
+            }
+            return "profile";
+        }
+
         clientService.updateMyProfile(principal.getName(), clientDTO);
         return "redirect:/profile?success";
     }

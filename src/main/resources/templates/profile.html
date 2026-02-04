@@ -53,6 +53,9 @@
                     <hr>
 
                     <form th:action="@{/profile/update}" method="post" th:object="${client}">
+
+                        <input type="hidden" th:field="*{email}">
+
                         <h5 class="mb-3" th:text="#{profile.edit.title}">
                             Edit Personal Information
                         </h5>
@@ -70,12 +73,21 @@
                             <label class="form-label" th:text="#{profile.password.label}">
                                 New Password
                             </label>
+
                             <input type="password"
                                    name="password"
                                    class="form-control"
+                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
                                    th:placeholder="#{profile.password.placeholder}">
+
                             <div class="form-text" th:text="#{profile.password.hint}">
                                 Min 8 characters. Fill only if you want to change it.
+                            </div>
+
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('password')}"
+                                 th:errors="*{password}">
+                                Password Error Message
                             </div>
                         </div>
 

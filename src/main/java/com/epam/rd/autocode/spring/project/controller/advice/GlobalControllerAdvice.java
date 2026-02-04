@@ -29,17 +29,10 @@ public class GlobalControllerAdvice {
                 model.addAttribute("currentUser", client);
                 model.addAttribute("userType", "CLIENT");
                 model.addAttribute("globalBalance", client.getBalance());
-                return;
             } catch (Exception e) {
-                //
-            }
-
-            try {
                 EmployeeDTO employee = employeeService.getEmployeeByEmail(email);
                 model.addAttribute("currentUser", employee);
                 model.addAttribute("userType", "EMPLOYEE");
-            } catch (Exception e) {
-                //
             }
         }
     }

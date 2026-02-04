@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

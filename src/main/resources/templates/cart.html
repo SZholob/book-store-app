@@ -33,7 +33,7 @@
         <td th:text="${item.price} + ' ' + #{cart.currency}">Price</td>
 
         <td>
-          <form action="/cart/update" method="post" class="d-flex align-items-center">
+          <form th:action="@{/cart/update}" method="post" class="d-flex align-items-center">
             <input type="hidden" name="bookId" th:value="${item.bookId}">
 
             <input type="number" name="quantity"
