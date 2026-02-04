@@ -43,11 +43,14 @@ public class SecurityConfig{
 
 
                         // Співробітники
+                        .requestMatchers("/orders/manage/**").hasRole("EMPLOYEE")
+                        .requestMatchers("/books/manage/**", "/books/add/**", "/books/edit/**", "/books/delete/**").hasRole("EMPLOYEE")
+                        .requestMatchers("/clients/**").hasRole("EMPLOYEE")
                         .requestMatchers("/employees/**").hasRole("EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/books/**").hasRole("EMPLOYEE")
 
                         // Клієнти
-                        .requestMatchers("/orders/**").hasRole("CUSTOMER")
+                        .requestMatchers("/orders/my/**", "/cart/**").hasRole("CUSTOMER")
+
                         .requestMatchers("/profile/**").authenticated()
 
                         .anyRequest().authenticated()

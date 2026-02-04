@@ -124,7 +124,7 @@ public class BookController {
         }
         try {
             bookService.updateBook(bookDTO.getId(), bookDTO);
-            return "redirect:/books";
+            return "redirect:/books/manage";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("languages", Language.values());
@@ -137,6 +137,28 @@ public class BookController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     public String deleteBook(@PathVariable String name){
         bookService.deleteBookByName(name);
-        return "redirect:/employee/books";
+        return "redirect:/books/manage";
+    }
+
+
+    @GetMapping("/manage")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public String manageBooks(Model model,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size,
+                              @RequestParam(required = false) String keyword) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<BookDTO> bookPage = bookService.getAllBooks(keyword, null, pageable);
+
+
+        model.addAttribute("books", bookPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+        model.addAttribute("totalItems", bookPage.getTotalElements());
+        model.addAttribute("keyword", keyword);
+
+        return "employee-books";
     }
 }
