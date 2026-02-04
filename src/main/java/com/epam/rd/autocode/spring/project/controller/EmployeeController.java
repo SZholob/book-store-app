@@ -112,7 +112,7 @@ public class EmployeeController {
         return "employee-books";
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees(){
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
@@ -136,5 +136,5 @@ public class EmployeeController {
     @PostMapping
     public ResponseEntity<EmployeeDTO> addEmployee(@RequestBody EmployeeDTO employeeDTO){
         return ResponseEntity.ok(employeeService.addEmployee(employeeDTO));
-    }
+    }*/
 }

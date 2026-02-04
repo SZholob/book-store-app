@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ClientController {
 
-    private final ClientService clientService;
+    /*private final ClientService clientService;
     @GetMapping("/{email}")
     public ResponseEntity<ClientDTO> getClientsByEmail(@PathVariable String email) {
         return ResponseEntity.ok(clientService.getClientByEmail(email));
@@ -32,5 +32,5 @@ public class ClientController {
     public ResponseEntity<Void> deleteClient(@PathVariable String email) {
         clientService.deleteClientByEmail(email);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }

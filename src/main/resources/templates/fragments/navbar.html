@@ -68,7 +68,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
-                            <a class="dropdown-item" href="/profile">
+                            <a class="dropdown-item" sec:authorize="hasRole('CUSTOMER')" href="/profile">
                                 <span th:text="#{navbar.myProfile}">My Profile</span>
                             </a>
                         </li>

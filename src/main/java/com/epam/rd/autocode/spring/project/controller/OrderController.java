@@ -31,10 +31,10 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByClient(email, pageable));
     }*/
 
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
         return new ResponseEntity<>(orderService.addOrder(orderDTO), HttpStatus.CREATED);
-    }
+    }*/
 
     /*@GetMapping("/employee/{email}")
     private ResponseEntity<List<OrderDTO>> getOderByEmployee(@PathVariable String email){

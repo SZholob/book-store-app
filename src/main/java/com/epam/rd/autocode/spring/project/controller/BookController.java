@@ -31,7 +31,7 @@ public class BookController {
     public String getAllBooks(Model model,
                               @RequestParam(defaultValue = "0") int page,      // Номер сторінки (0 - перша)
                               @RequestParam(defaultValue = "6") int size,      // Скільки книг на сторінці
-                              @RequestParam(defaultValue = "id") String sortField, // Поле для сортування
+                              @RequestParam(defaultValue = "name") String sortField, // Поле для сортування
                               @RequestParam(defaultValue = "asc") String sortDir,  // Напрямок (asc/desc)
                               @RequestParam(required = false) String keyword,       // Пошуковий запит
                               @RequestParam(required = false) String genre) {

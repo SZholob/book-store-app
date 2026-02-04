@@ -18,7 +18,7 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
-public class HomeController {
+public class AuthController {
 
     private final ClientService clientService;
 
