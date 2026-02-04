@@ -8,42 +8,49 @@
     <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
       <a class="page-link"
          th:href="@{${baseUrl}(page=0, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
-        « First
+        « <span th:text="#{pager.first}">First</span>
       </a>
     </li>
 
     <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
       <a class="page-link"
          th:href="@{${baseUrl}(page=${currentPage - 1}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
-        ‹ Prev
+        ‹ <span th:text="#{pager.prev}">Prev</span>
       </a>
     </li>
 
-    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+    <li class="page-item"
+        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
         th:classappend="${i == currentPage} ? 'active'">
       <a class="page-link"
          th:href="@{${baseUrl}(page=${i}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}"
-         th:text="${i + 1}">1</a>
+         th:text="${i + 1}">
+        1
+      </a>
     </li>
 
     <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
       <a class="page-link"
          th:href="@{${baseUrl}(page=${currentPage + 1}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
-        Next ›
+        <span th:text="#{pager.next}">Next</span> ›
       </a>
     </li>
 
     <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
       <a class="page-link"
          th:href="@{${baseUrl}(page=${totalPages - 1}, size=${size}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword}, genre=${genre}, status=${selectedStatus}, clientEmail=${selectedEmail})}">
-        Last »
+        <span th:text="#{pager.last}">Last</span> »
       </a>
     </li>
   </ul>
 
   <div class="text-center text-muted small mt-2">
-    Showing page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
-    (Total items: <span th:text="${totalItems}"></span>)
+    <span th:text="#{pager.showing}">Showing page</span>
+    <span th:text="${currentPage + 1}"></span>
+    <span th:text="#{pager.of}">of</span>
+    <span th:text="${totalPages}"></span>
+    (<span th:text="#{pager.totalItems}">Total items</span>:
+    <span th:text="${totalItems}"></span>)
   </div>
 </nav>
 

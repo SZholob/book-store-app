@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Book Store</title>
+    <title th:text="#{books.list.title}">Book Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .book-card:hover {
@@ -22,7 +22,7 @@
         <div class="card-body">
             <div class="row align-items-center gy-3">
                 <div class="col-md-4">
-                    <h2 class="mb-0 text-secondary">Available Books</h2>
+                    <h2 class="mb-0 text-secondary" th:text="#{books.list.title}">Available Books</h2>
                 </div>
 
                 <div class="col-md-8">
@@ -30,19 +30,20 @@
                         <input type="hidden" name="sortDir" th:value="${sortDir}">
 
                         <select name="genre" class="form-select w-auto" onchange="this.form.submit()">
-                            <option value="" th:selected="${selectedGenre == null}">All Genres</option>
+                            <option value="" th:selected="${selectedGenre == null}" th:text="#{books.filter.allGenres}">All Genres</option>
                             <option th:each="g : ${genres}"
                                     th:value="${g}"
                                     th:text="${g}"
                                     th:selected="${g == selectedGenre}">Genre Name</option>
                         </select>
 
-                        <input type="text" name="keyword" th:value="${keyword}" class="form-control" style="max-width: 200px;" placeholder="Search...">
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control" style="max-width: 200px;"
+                               th:placeholder="#{books.filter.search}">
 
                         <select name="sortField" class="form-select w-auto" onchange="this.form.submit()">
-                            <option value="name" th:selected="${sortField == 'name'}">Sort: Name</option>
-                            <option value="price" th:selected="${sortField == 'price'}">Sort: Price</option>
-                            <option value="quantity" th:selected="${sortField == 'quantity'}">Sort: Qty</option>
+                            <option value="name" th:selected="${sortField == 'name'}" th:text="#{books.filter.sort.name}">Sort: Name</option>
+                            <option value="price" th:selected="${sortField == 'price'}" th:text="#{books.filter.sort.price}">Sort: Price</option>
+                            <option value="quantity" th:selected="${sortField == 'quantity'}" th:text="#{books.filter.sort.quantity}">Sort: Qty</option>
                         </select>
 
                         <a th:href="@{/books(page=${currentPage}, size=6, sortField=${sortField}, sortDir=${reverseSortDir}, keyword=${keyword}, genre=${selectedGenre})}"
@@ -50,8 +51,8 @@
                             <span th:text="${sortDir == 'asc' ? '⬆️' : '⬇️'}"></span>
                         </a>
 
-                        <button type="submit" class="btn btn-primary">🔍</button>
-                        <a href="/books" class="btn btn-outline-danger">✖</a>
+                        <button type="submit" class="btn btn-primary" th:text="#{books.filter.submit}">🔍</button>
+                        <a href="/books" class="btn btn-outline-danger" th:text="#{books.filter.reset}">✖</a>
                     </form>
                 </div>
             </div>
@@ -59,8 +60,8 @@
     </div>
 
     <div th:if="${#lists.isEmpty(books)}" class="alert alert-warning text-center py-5">
-        <h4>😕 No books found matching your criteria.</h4>
-        <a href="/books" class="btn btn-outline-dark mt-2">Clear Filters</a>
+        <h4 th:text="#{books.notFound}">😕 No books found matching your criteria.</h4>
+        <a href="/books" class="btn btn-outline-dark mt-2" th:text="#{books.filter.clear}">Clear Filters</a>
     </div>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
@@ -76,42 +77,41 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-truncate" th:text="${book.name}" th:title="${book.name}">Book Title</h5>
                     <p class="card-text text-muted small mb-1">
-                        by <a th:href="@{/books(keyword=${book.author})}"
-                              class="text-decoration-none text-muted fw-bold"
-                              th:text="${book.author}">Author</a>
+                        <span th:text="#{books.label.by}">by</span>
+                        <a th:href="@{/books(keyword=${book.author})}"
+                           class="text-decoration-none text-muted fw-bold"
+                           th:text="${book.author}">Author</a>
                     </p>
 
                     <div class="mt-auto pt-3 d-flex justify-content-between align-items-end">
                         <div>
-                            <span class="fs-5 fw-bold text-primary" th:text="${book.price} + ' ₴'">Price</span>
-                            <div class="small text-muted" th:text="'Stock: ' + ${book.quantity}">Qty</div>
+                            <span class="fs-5 fw-bold text-primary" th:text="${book.price} + ' ' + #{books.label.price}">Price</span>
+                            <div class="small text-muted" th:text="#{books.label.stock} + ': ' + ${book.quantity}">Qty</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-footer bg-white border-top-0 pb-3 d-flex justify-content-between align-items-center">
-                    <a th:href="@{/books/{name}(name=${book.name})}" class="btn btn-outline-primary btn-sm px-3">Details</a>
+                    <a th:href="@{/books/{name}(name=${book.name})}" class="btn btn-outline-primary btn-sm"
+                       th:text="#{books.button.details}">Details</a>
                     <a sec:authorize="hasRole('EMPLOYEE')"
                        th:href="@{/books/edit/{id}(id=${book.id})}"
-                       class="btn btn-warning btn-sm">
-                        ✏️ Edit
-                    </a>
+                       class="btn btn-warning btn-sm"
+                       th:text="#{books.button.edit}">✏️ Edit</a>
                     <div th:if="${book.quantity > 0}">
                         <form th:action="@{/cart/add}" method="post">
                             <input type="hidden" name="bookId" th:value="${book.id}">
                             <input type="hidden" name="quantity" value="1">
 
-                            <button type="submit" class="btn btn-success btn-sm px-3" sec:authorize="hasRole('CUSTOMER')">
-                                🛒 Add
-                            </button>
-                            <a href="/login" class="btn btn-outline-warning btn-sm" sec:authorize="!isAuthenticated()">
-                                Login
-                            </a>
+                            <button type="submit" class="btn btn-success btn-sm px-3" sec:authorize="hasRole('CUSTOMER')"
+                                    th:text="#{books.button.addToCart}">🛒 Add</button>
+                            <a href="/login" class="btn btn-outline-warning btn-sm" sec:authorize="!isAuthenticated()"
+                               th:text="#{books.button.login}">Login</a>
                         </form>
                     </div>
 
                     <div th:unless="${book.quantity > 0}">
-                        <span class="badge bg-danger p-2">Sold Out</span>
+                        <span class="badge bg-danger p-2" th:text="#{books.status.soldOut}">Sold Out</span>
                     </div>
                 </div>
             </div>

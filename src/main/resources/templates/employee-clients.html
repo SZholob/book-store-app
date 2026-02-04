@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Manage Clients</title>
+  <title th:text="#{admin.clients.title}">Manage Clients</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -9,17 +9,46 @@
 <div th:replace="~{fragments/navbar :: header}"></div>
 
 <div class="d-flex justify-content-between align-items-center mb-4 px-4 mt-4">
-  <h2>Client Manager</h2>
+  <h2 th:text="#{admin.clients.header}">Client Manager</h2>
 
   <form action="/employee/clients" method="get" class="d-flex gap-2">
-    <input type="text" name="keyword" class="form-control" placeholder="Name or Email..." th:value="${keyword}">
-    <select name="isBlocked" class="form-select w-auto" onchange="this.form.submit()">
-      <option value="" th:selected="${isBlocked == null}">Status: All</option>
-      <option value="true" th:selected="${isBlocked == true}">Blocked</option>
-      <option value="false" th:selected="${isBlocked == false}">Active</option>
+    <input type="text"
+           name="keyword"
+           class="form-control"
+           th:placeholder="#{admin.clients.search.placeholder}"
+           th:value="${keyword}">
+
+    <select name="isBlocked"
+            class="form-select w-auto"
+            onchange="this.form.submit()">
+      <option value=""
+              th:selected="${isBlocked == null}"
+              th:text="#{admin.clients.status.all}">
+        Status: All
+      </option>
+      <option value="true"
+              th:selected="${isBlocked == true}"
+              th:text="#{admin.clients.status.blocked}">
+        Blocked
+      </option>
+      <option value="false"
+              th:selected="${isBlocked == false}"
+              th:text="#{admin.clients.status.active}">
+        Active
+      </option>
     </select>
-    <button class="btn btn-primary" type="submit">Search</button>
-    <a href="/employee/clients" class="btn btn-outline-secondary">Reset</a>
+
+    <button class="btn btn-primary"
+            type="submit"
+            th:text="#{admin.clients.search}">
+      Search
+    </button>
+
+    <a href="/employee/clients"
+       class="btn btn-outline-secondary"
+       th:text="#{admin.clients.reset}">
+      Reset
+    </a>
   </form>
 </div>
 
@@ -28,42 +57,72 @@
   <table class="table table-striped bg-white shadow-sm rounded align-middle">
     <thead class="table-dark">
     <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Balance</th>
-      <th>Status</th>
-      <th>Actions</th>
+      <th th:text="#{admin.clients.table.name}">Name</th>
+      <th th:text="#{admin.clients.table.email}">Email</th>
+      <th th:text="#{admin.clients.table.balance}">Balance</th>
+      <th th:text="#{admin.clients.table.status}">Status</th>
+      <th th:text="#{admin.clients.table.actions}">Actions</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="client : ${clients}">
       <td th:text="${client.name}">Name</td>
       <td th:text="${client.email}">Email</td>
-      <td th:text="${client.balance} + ' UAH'">0.00</td>
-      <td>
-        <span th:if="${client.isBlocked}" class="badge bg-danger">BLOCKED</span>
-        <span th:unless="${client.isBlocked}" class="badge bg-success">ACTIVE</span>
+
+      <td th:text="${client.balance} + ' ' + #{common.currency}">
+        0.00
       </td>
+
+      <td>
+        <span th:if="${client.isBlocked}"
+              class="badge bg-danger"
+              th:text="#{admin.clients.status.blocked.badge}">
+          BLOCKED
+        </span>
+
+        <span th:unless="${client.isBlocked}"
+              class="badge bg-success"
+              th:text="#{admin.clients.status.active.badge}">
+          ACTIVE
+        </span>
+      </td>
+
       <td>
         <div class="d-flex gap-2">
-          <form th:if="${!client.isBlocked}" th:action="@{/employee/clients/{email}/block(email=${client.email})}" method="post">
-            <button class="btn btn-sm btn-outline-danger">Block 🔒</button>
+
+          <form th:if="${!client.isBlocked}"
+                th:action="@{/employee/clients/{email}/block(email=${client.email})}"
+                method="post">
+            <button class="btn btn-sm btn-outline-danger"
+                    th:text="#{admin.clients.block}">
+              Block 🔒
+            </button>
           </form>
 
-          <form th:if="${client.isBlocked}" th:action="@{/employee/clients/{email}/unblock(email=${client.email})}" method="post">
-            <button class="btn btn-sm btn-outline-success">Unblock 🔓</button>
+          <form th:if="${client.isBlocked}"
+                th:action="@{/employee/clients/{email}/unblock(email=${client.email})}"
+                method="post">
+            <button class="btn btn-sm btn-outline-success"
+                    th:text="#{admin.clients.unblock}">
+              Unblock 🔓
+            </button>
           </form>
 
-          <a th:href="@{/employee/orders(clientEmail=${client.email})}" class="btn btn-sm btn-primary">
+          <a th:href="@{/employee/orders(clientEmail=${client.email})}"
+             class="btn btn-sm btn-primary"
+             th:text="#{admin.clients.viewOrders}">
             View Orders 📦
           </a>
+
         </div>
       </td>
     </tr>
     </tbody>
   </table>
+
   <div th:replace="~{fragments/pageNavigation :: pager(baseUrl='/employee/clients')}"></div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

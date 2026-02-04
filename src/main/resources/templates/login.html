@@ -1,37 +1,97 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login</title>
+    <title th:text="#{login.title}">Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div style="text-align: center; margin-top: 50px;">
-    <h2>Login</h2>
+<body class="bg-light">
 
-    <div th:if="${param.error}" style="color: red;">
-        Invalid email or password.
-    </div>
-    <div th:if="${param.success}" style="color: green;">
-        You have successfully registered! Please login.
-    </div>
-    <div th:if="${param.logout}" style="color: blue;">
-        You have been logged out.
-    </div>
+<!-- Header -->
+<div th:replace="~{fragments/navbar :: header}"></div>
 
-    <form th:action="@{/login}" method="post">
-        <p>
-            <label>Email:</label>
-            <input type="email" name="username" required placeholder="Enter email"/>
-        </p>
-        <p>
-            <label>Password:</label>
-            <input type="password" name="password" required minlength="8" placeholder="Enter password"/>
-        </p>
-        <button type="submit">Sign In</button>
-    </form>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5 col-lg-4">
 
-    <br/>
-    <a th:href="@{/registration}">Create new account</a> |
-    <a th:href="@{/books}">Back to Books</a>
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4"
+                        th:text="#{login.header}">
+                        Login
+                    </h3>
+
+                    <!-- Alerts -->
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        <span th:text="#{login.error}">Invalid email or password.</span>
+                    </div>
+
+                    <div th:if="${param.success}" class="alert alert-success">
+                        <span th:text="#{login.success}">
+                            You have successfully registered!
+                        </span>
+                    </div>
+
+                    <div th:if="${param.logout}" class="alert alert-info">
+                        <span th:text="#{login.logout}">
+                            You have been logged out.
+                        </span>
+                    </div>
+
+                    <!-- Form -->
+                    <form th:action="@{/login}" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label"
+                                   th:text="#{login.email.label}">
+                                Email
+                            </label>
+                            <input type="email"
+                                   name="username"
+                                   class="form-control"
+                                   required
+                                   th:placeholder="#{login.email.placeholder}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"
+                                   th:text="#{login.password.label}">
+                                Password
+                            </label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control"
+                                   required
+                                   minlength="8"
+                                   th:placeholder="#{login.password.placeholder}">
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100"
+                                th:text="#{login.submit}">
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer text-center bg-white">
+                    <a th:href="@{/registration}"
+                       class="text-decoration-none"
+                       th:text="#{login.register}">
+                        Create new account
+                    </a>
+                    <span class="mx-2 text-muted">|</span>
+                    <a th:href="@{/books}"
+                       class="text-decoration-none"
+                       th:text="#{login.back}">
+                        Back to Books
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

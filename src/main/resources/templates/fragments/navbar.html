@@ -5,7 +5,9 @@
 
 <nav th:fragment="header" class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 sticky-top">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/books">📚 BookStore</a>
+        <a class="navbar-brand fw-bold" href="/books">
+            📚 <span th:text="#{navbar.brand}">BookStore</span>
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
@@ -16,48 +18,80 @@
 
                 <li class="nav-item d-flex align-items-center me-3" sec:authorize="hasRole('CUSTOMER')">
                     <span class="text-white me-3" th:if="${globalBalance != null}">
-                        💰 <span th:text="${globalBalance}">0.00</span> UAH
+                        💰 <span th:text="${globalBalance}">0.00</span> <span th:text="#{navbar.uah}">UAH</span>
                     </span>
 
                     <a href="/cart" class="btn btn-warning position-relative me-2">
-                        🛒 Cart
+                        🛒 <span th:text="#{navbar.cart}">Cart</span>
                     </a>
 
                     <a href="/orders/my" class="btn btn-outline-info">
-                        📦 My Orders
+                        📦 <span th:text="#{navbar.myOrders}">My Orders</span>
                     </a>
                 </li>
 
                 <li class="nav-item dropdown me-3" sec:authorize="hasRole('EMPLOYEE')">
                     <a class="nav-link dropdown-toggle btn btn-outline-secondary text-light" href="#" role="button" data-bs-toggle="dropdown">
-                        🛠️ Admin Panel
+                        🛠️ <span th:text="#{navbar.adminPanel}">Admin Panel</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/employee/books">📚 Manage Books</a></li>
-                        <li><a class="dropdown-item" href="/employee/orders">📝 Manage Orders</a></li>
-                        <li><a class="dropdown-item" href="/employee/clients">👥 Manage Clients</a></li>
+                        <li>
+                            <a class="dropdown-item" href="/employee/books">
+                                📚 <span th:text="#{navbar.manageBooks}">Manage Books</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/employee/orders">
+                                📝 <span th:text="#{navbar.manageOrders}">Manage Orders</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/employee/clients">
+                                👥 <span th:text="#{navbar.manageClients}">Manage Clients</span>
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/books/add">➕ Add New Book</a></li>
+                        <li>
+                            <a class="dropdown-item" href="/books/add">
+                                ➕ <span th:text="#{navbar.addBook}">Add New Book</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle text-white fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                        👤 <span th:text="${currentUser != null ? currentUser.name : 'User'}">Profile</span>
+                        👤
+                        <span th:text="${currentUser != null ? currentUser.name : 'User'}">
+                            <span th:text="#{navbar.profile}">Profile</span>
+                        </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                        <li>
+                            <a class="dropdown-item" href="/profile">
+                                <span th:text="#{navbar.myProfile}">My Profile</span>
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/logout">
+                                <span th:text="#{navbar.logout}">Logout</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
                 <li class="nav-item me-2" sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="btn btn-outline-light me-2">Login</a>
+                    <a href="/login" class="btn btn-outline-light me-2">
+                        <span th:text="#{navbar.login}">Login</span>
+                    </a>
                 </li>
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a href="/registration" class="btn btn-light">Register</a>
+                    <a href="/registration" class="btn btn-light">
+                        <span th:text="#{navbar.register}">Register</span>
+                    </a>
                 </li>
+
                 <li class="nav-item dropdown me-2">
                     <a class="nav-link dropdown-toggle text-secondary" href="#" role="button" data-bs-toggle="dropdown">
                         🌍 <span th:text="${#locale.language == 'uk' ? 'UA' : 'EN'}">EN</span>
@@ -66,13 +100,13 @@
                         <li>
                             <a class="dropdown-item"
                                th:href="@{''(lang='en', sortField=${param.sortField}, keyword=${param.keyword})}">
-                                🇺🇸 English
+                                🇺🇸 <span th:text="#{navbar.lang.en}">English</span>
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item"
                                th:href="@{''(lang='uk', sortField=${param.sortField}, keyword=${param.keyword})}">
-                                🇺🇦 Українська
+                                🇺🇦 <span th:text="#{navbar.lang.uk}">Українська</span>
                             </a>
                         </li>
                     </ul>

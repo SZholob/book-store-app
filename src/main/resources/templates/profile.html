@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>My Profile</title>
+    <title th:text="#{profile.title}">My Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -12,28 +12,40 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <div th:if="${param.success}"
+                 class="alert alert-success alert-dismissible fade show"
+                 role="alert"
+                 th:text="#{profile.success}">
                 Profile updated successfully!
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
 
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">My Profile</h3>
+                    <h3 class="mb-0" th:text="#{profile.header}">My Profile</h3>
                 </div>
+
                 <div class="card-body">
 
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="p-3 bg-light rounded border">
-                                <small class="text-muted">Current Balance</small>
-                                <h4 class="text-success" th:text="${client.balance} + ' UAH'">0.00 UAH</h4>
+                                <small class="text-muted" th:text="#{profile.balance.label}">
+                                    Current Balance
+                                </small>
+                                <h4 class="text-success"
+                                    th:text="${client.balance} + ' UAH'">0.00 UAH</h4>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="p-3 bg-light rounded border">
-                                <small class="text-muted">Email (Login)</small>
-                                <h4 class="text-dark" th:text="${client.email}">user@example.com</h4>
+                                <small class="text-muted" th:text="#{profile.email.label}">
+                                    Email (Login)
+                                </small>
+                                <h4 class="text-dark" th:text="${client.email}">
+                                    user@example.com
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -41,23 +53,43 @@
                     <hr>
 
                     <form th:action="@{/profile/update}" method="post" th:object="${client}">
-                        <h5 class="mb-3">Edit Personal Information</h5>
+                        <h5 class="mb-3" th:text="#{profile.edit.title}">
+                            Edit Personal Information
+                        </h5>
 
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" th:field="*{name}" class="form-control" required minlength="2">
+                            <label class="form-label" th:text="#{profile.name.label}">
+                                Full Name
+                            </label>
+                            <input type="text" th:field="*{name}"
+                                   class="form-control"
+                                   required minlength="2">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">New Password</label>
-                            <input type="password" name="password" class="form-control"
-                                   placeholder="Leave blank to keep current password">
-                            <div class="form-text">Min 8 characters. Fill only if you want to change it.</div>
+                            <label class="form-label" th:text="#{profile.password.label}">
+                                New Password
+                            </label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control"
+                                   th:placeholder="#{profile.password.placeholder}">
+                            <div class="form-text" th:text="#{profile.password.hint}">
+                                Min 8 characters. Fill only if you want to change it.
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <a href="/books" class="btn btn-secondary me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="/books"
+                               class="btn btn-secondary me-2"
+                               th:text="#{profile.cancel}">
+                                Cancel
+                            </a>
+                            <button type="submit"
+                                    class="btn btn-primary"
+                                    th:text="#{profile.save}">
+                                Save Changes
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -65,12 +97,23 @@
 
             <div class="card shadow-sm mt-4 border-danger">
                 <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">Danger Zone</h5>
+                    <h5 class="mb-0" th:text="#{profile.danger.title}">
+                        Danger Zone
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <p>Once you delete your account, there is no going back. Please be certain.</p>
-                    <form th:action="@{/profile/delete}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-                        <button type="submit" class="btn btn-outline-danger">Delete My Account</button>
+                    <p th:text="#{profile.danger.text}">
+                        Once you delete your account, there is no going back.
+                    </p>
+
+                    <form th:action="@{/profile/delete}"
+                          method="post"
+                          th:onsubmit="|return confirm('#{profile.danger.confirm}')|">
+                        <button type="submit"
+                                class="btn btn-outline-danger"
+                                th:text="#{profile.danger.delete}">
+                            Delete My Account
+                        </button>
                     </form>
                 </div>
             </div>
