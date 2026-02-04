@@ -33,12 +33,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee existing = employeeRepository.findByEmail(email)
                 .orElseThrow(()->new NotFoundException("Employee not found: " + email));
 
+        String oldPasswordHash = existing.getPassword();
+
         modelMapper.map(employeeDTO, existing);
 
-        if (employeeDTO.getPassword() != null && !employeeDTO.getPassword().isEmpty()) {
+        if (employeeDTO.getPassword() != null && !employeeDTO.getPassword().trim().isEmpty()) {
             existing.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
+        } else {
+            existing.setPassword(oldPasswordHash);
         }
-
+        existing.setEmail(email);
         modelMapper.map(employeeRepository.save(existing), EmployeeDTO.class);
     }
 
