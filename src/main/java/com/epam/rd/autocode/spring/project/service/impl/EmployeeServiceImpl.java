@@ -43,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             existing.setPassword(oldPasswordHash);
         }
         existing.setEmail(email);
-        modelMapper.map(employeeRepository.save(existing), EmployeeDTO.class);
+        employeeRepository.save(existing);
     }
 
 

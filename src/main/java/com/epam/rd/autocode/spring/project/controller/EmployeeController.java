@@ -32,9 +32,15 @@ public class EmployeeController {
     }
 
     @PostMapping("/profile/update")
-    public String updateProfile(@Valid @ModelAttribute("employee") EmployeeDTO employeeDTO,
+    public String updateProfile(@ModelAttribute("employee") EmployeeDTO employeeDTO,
                                 BindingResult bindingResult,
                                 Principal principal) {
+        if (employeeDTO.getPassword() != null && !employeeDTO.getPassword().isBlank()) {
+            if (employeeDTO.getPassword().length() < 8) {
+                bindingResult.rejectValue("password", "error.client", "Password must be at least 8 chars");
+            }
+        }
+
         if (bindingResult.hasErrors()){
             try {
                 EmployeeDTO dbEmployee = employeeService.getEmployeeByEmail(principal.getName());

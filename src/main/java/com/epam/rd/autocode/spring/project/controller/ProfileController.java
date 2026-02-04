@@ -38,9 +38,15 @@ public class ProfileController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(@Valid @ModelAttribute("client") ClientDTO clientDTO,
+    public String updateProfile(@ModelAttribute("client") ClientDTO clientDTO,
                                 BindingResult bindingResult,
                                 Principal principal) {
+        if (clientDTO.getPassword() != null && !clientDTO.getPassword().isBlank()) {
+            if (clientDTO.getPassword().length() < 8) {
+                bindingResult.rejectValue("password", "error.client", "Password must be at least 8 chars");
+            }
+        }
+
         if (bindingResult.hasErrors()){
             try {
                 ClientDTO dbClient = clientService.getClientByEmail(principal.getName());

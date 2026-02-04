@@ -94,8 +94,7 @@ public class ClientServiceImpl implements ClientService {
             existingClient.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
         }
 
-        Client savedClient = clientRepository.save(existingClient);
-        modelMapper.map(savedClient, ClientDTO.class);
+        clientRepository.save(existingClient);
     }
 
     @Override
