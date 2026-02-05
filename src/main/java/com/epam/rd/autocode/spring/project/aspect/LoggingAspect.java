@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.aspect;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 
 @Aspect
 @Component
+@Slf4j
 public class LoggingAspect {
 
     @Pointcut("execution(* com.epam.rd.autocode.spring.project.service.impl.*.*(..))")

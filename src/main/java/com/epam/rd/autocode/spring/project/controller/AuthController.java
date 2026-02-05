@@ -38,6 +38,7 @@ public class AuthController {
     public String index() {
         return "redirect:/books";
     }
+
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("client", new ClientDTO());

@@ -12,8 +12,6 @@ public interface OrderService {
 
     Page<OrderDTO> getOrdersByClient(String clientEmail, Pageable pageable);
 
-    Page<OrderDTO> getOrdersByEmployee(String employeeEmail, Pageable pageable);
-
     OrderDTO addOrder(OrderDTO order);
 
     void createOrderFromCart(List<CartItem> cart);

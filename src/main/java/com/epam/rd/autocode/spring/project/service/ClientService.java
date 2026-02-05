@@ -10,10 +10,6 @@ public interface ClientService {
 
     ClientDTO getClientByEmail(String email);
 
-    ClientDTO updateClientByEmail(String email, ClientDTO client);
-
-    void deleteClientByEmail(String email);
-
     ClientDTO addClient(ClientDTO client);
 
     void blockClient(String email);

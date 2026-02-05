@@ -7,6 +7,7 @@ import com.epam.rd.autocode.spring.project.model.Book;
 import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.service.BookService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
@@ -63,6 +65,7 @@ public class BookServiceImpl implements BookService {
         }
         Book book = modelMapper.map(bookDTO, Book.class);
         Book saveBook = bookRepository.save(book);
+        log.info("Add new book: {}", saveBook.getName());
         return modelMapper.map(saveBook, BookDTO.class);
     }
 
@@ -80,7 +83,9 @@ public class BookServiceImpl implements BookService {
         modelMapper.map(bookDTO, existingBook);
         existingBook.setId(id);
 
+
         Book updatedBook = bookRepository.save(existingBook);
+        log.info("Update book: {}", existingBook.getName());
         return modelMapper.map(updatedBook, BookDTO.class);
     }
 
@@ -90,6 +95,7 @@ public class BookServiceImpl implements BookService {
     public void deleteBookByName(String name) {
         Book book = bookRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Book not found with name: " + name));
+        log.info("Delete book: {}", book.getName());
         bookRepository.deleteByName(name);
     }
 

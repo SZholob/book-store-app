@@ -39,12 +39,6 @@ public class OrderServiceImpl implements OrderService {
         return orderPage.map(this::mapToDTO);
     }
 
-    @Override
-    public Page<OrderDTO> getOrdersByEmployee(String employeeEmail, Pageable pageable) {
-        Page<Order> orderPage;
-        orderPage = orderRepository.findAllByEmployeeEmail(employeeEmail, pageable);
-        return orderPage.map(this::mapToDTO);
-    }
 
     @Override
     public OrderDTO addOrder(OrderDTO orderDTO) {

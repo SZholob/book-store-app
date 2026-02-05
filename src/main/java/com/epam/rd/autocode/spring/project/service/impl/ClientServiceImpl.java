@@ -8,6 +8,7 @@ import com.epam.rd.autocode.spring.project.model.enums.Role;
 import com.epam.rd.autocode.spring.project.repo.ClientRepository;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
 
@@ -52,11 +54,13 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     public ClientDTO addClient(ClientDTO clientDTO) {
         if (clientRepository.findByEmail(clientDTO.getEmail()).isPresent()){
+            log.error("Trying to add an existing user: {}", clientDTO.getEmail());
             throw new AlreadyExistException("Client already exists: " + clientDTO.getEmail());
         }
         Client client = modelMapper.map(clientDTO, Client.class);
         client.setRole(Role.CUSTOMER);
         client.setPassword(passwordEncoder.encode(client.getPassword()));
+        log.info("Add new user: {}",clientDTO.getEmail());
         return modelMapper.map(clientRepository.save(client), ClientDTO.class);
 
     }
@@ -70,6 +74,7 @@ public class ClientServiceImpl implements ClientService {
 
         client.setBlocked(true);
         clientRepository.save(client);
+        log.info("User blocked: {}", email);
     }
 
     @Override
@@ -80,6 +85,7 @@ public class ClientServiceImpl implements ClientService {
                 .orElseThrow(() -> new NotFoundException("Client not found: " + email));
         client.setBlocked(false);
         clientRepository.save(client);
+        log.info("User unblocked: {}", email);
     }
 
     @Override
@@ -95,37 +101,17 @@ public class ClientServiceImpl implements ClientService {
         }
 
         clientRepository.save(existingClient);
+        log.info("Customer updated profile: {}", email);
     }
 
     @Override
+    @PreAuthorize("hasRole('CUSTOMER')")
     public void deleteMyAccount(String email) {
         Client client = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found: " + email));
 
         clientRepository.delete(client);
+        log.info("Customer deleted profile: {}", email);
     }
 
-    @Override
-    @Transactional
-    public ClientDTO updateClientByEmail(String email, ClientDTO clientDTO) {
-        Client existingClient = clientRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
-
-        modelMapper.map(clientDTO, existingClient);
-
-        if (clientDTO.getPassword() != null && !clientDTO.getPassword().isEmpty()) {
-            existingClient.setPassword(passwordEncoder.encode(clientDTO.getPassword()));
-        }
-
-        return modelMapper.map(clientRepository.save(existingClient), ClientDTO.class);
-    }
-
-    @Override
-    @Transactional
-    @PreAuthorize("hasRole('EMPLOYEE')")
-    public void deleteClientByEmail(String email) {
-        Client client = clientRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
-        clientRepository.delete(client);
-    }
 }
