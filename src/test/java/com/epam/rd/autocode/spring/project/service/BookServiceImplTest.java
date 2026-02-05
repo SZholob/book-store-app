@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,90 +31,188 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class BookServiceImplTest {
 
-    @Mock private BookRepository bookRepository;
-    @Mock private ModelMapper modelMapper;
-    @InjectMocks private BookServiceImpl bookService;
+    @Mock
+    private BookRepository bookRepository;
+
+    @Spy
+    private ModelMapper modelMapper = new ModelMapper();
+
+    @InjectMocks
+    private BookServiceImpl bookService;
 
     @Test
-    void getAllBooks_ShouldReturnPage() {
+    void getAllBooks_NoFilter_ShouldReturnAll() {
         Pageable pageable = PageRequest.of(0, 10);
-        List<Book> books = List.of(new Book());
-        Page<Book> bookPage = new PageImpl<>(books);
+        Book book = new Book();
+        book.setId(1L);
+        book.setName("Test Book");
+        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(book));
 
         when(bookRepository.findAll(pageable)).thenReturn(bookPage);
-        when(modelMapper.map(any(), eq(BookDTO.class))).thenReturn(new BookDTO());
 
-        Page<BookDTO> result = bookService.getAllBooks(null,null,  pageable);
+        Page<BookDTO> result = bookService.getAllBooks(null, null, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Test Book", result.getContent().get(0).getName());
+        verify(bookRepository).findAll(pageable);
+    }
+
+
+
+    @Test
+    void getAllBooks_WithGenre_ShouldFilterByGenre() {
+        Pageable pageable = PageRequest.of(0, 10);
+        String genre = "Fantasy";
+        Book book = new Book();
+        book.setGenre(genre);
+        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(book));
+
+        when(bookRepository.findByGenre(genre, pageable)).thenReturn(bookPage);
+
+        Page<BookDTO> result = bookService.getAllBooks(null, genre, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(genre, result.getContent().get(0).getGenre());
+        verify(bookRepository).findByGenre(genre, pageable);
+        verify(bookRepository, never()).findAll(any(Pageable.class));
+    }
+
+    @Test
+    void getAllBooks_WithKeyword_ShouldFilterByKeyword() {
+        Pageable pageable = PageRequest.of(0, 10);
+        String keyword = "Harry";
+        Book book = new Book();
+        book.setName("Harry Potter");
+        Page<Book> bookPage = new PageImpl<>(Collections.singletonList(book));
+
+        when(bookRepository.findByNameContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword, pageable))
+                .thenReturn(bookPage);
+
+        Page<BookDTO> result = bookService.getAllBooks(keyword, null, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Harry Potter", result.getContent().get(0).getName());
+        verify(bookRepository).findByNameContainingIgnoreCaseOrAuthorContainingIgnoreCase(keyword, keyword, pageable);
+    }
+
+    @Test
+    void getBookById_Success() {
+
+        Book book = new Book();
+        book.setId(1L);
+        book.setName("Found Me");
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+
+        BookDTO result = bookService.getBookById(1L);
 
         assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
+        assertEquals(1L, result.getId());
+        assertEquals("Found Me", result.getName());
     }
 
     @Test
-    void getBookByName_ShouldReturnBook() {
-        String name = "Test Book";
+    void getBookById_NotFound_ShouldThrowException() {
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+
+        assertThrows(NotFoundException.class, () -> bookService.getBookById(99L));
+    }
+
+    @Test
+    void getBookByName_Success() {
+        String name = "Unique Book";
         Book book = new Book();
         book.setName(name);
-
         when(bookRepository.findByName(name)).thenReturn(Optional.of(book));
-        when(modelMapper.map(book, BookDTO.class)).thenReturn(new BookDTO());
 
-        assertNotNull(bookService.getBookByName(name));
+
+        BookDTO result = bookService.getBookByName(name);
+
+
+        assertEquals(name, result.getName());
     }
 
+
     @Test
-    void getBookById_ShouldThrowNotFound() {
-        when(bookRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> bookService.getBookById(1L));
+    void getBookByName_NotFound_ShouldThrowException() {
+        String name = "Missing Book";
+        when(bookRepository.findByName(name)).thenReturn(Optional.empty());
+
+
+        assertThrows(NotFoundException.class, () -> bookService.getBookByName(name));
     }
 
-    @Test
-    void addBook_ShouldThrowAlreadyExists() {
-        BookDTO dto = new BookDTO();
-        dto.setName("Existing Book");
-
-        when(bookRepository.findByName(dto.getName())).thenReturn(Optional.of(new Book()));
-
-        assertThrows(AlreadyExistException.class, () -> bookService.addBook(dto));
-    }
 
     @Test
-    void addBook_ShouldSaveBook() {
+    void addBook_Success() {
         BookDTO dto = new BookDTO();
         dto.setName("New Book");
-        Book book = new Book();
+        dto.setPrice(BigDecimal.valueOf(20.0));
 
-        when(bookRepository.findByName(dto.getName())).thenReturn(Optional.empty());
-        when(modelMapper.map(dto, Book.class)).thenReturn(book);
-        when(bookRepository.save(book)).thenReturn(book);
-        when(modelMapper.map(book, BookDTO.class)).thenReturn(dto);
+        when(bookRepository.findByName("New Book")).thenReturn(Optional.empty());
+        when(bookRepository.save(any(Book.class))).thenAnswer(invocation -> {
+            Book b = invocation.getArgument(0);
+            b.setId(10L);
+            return b;
+        });
 
         BookDTO result = bookService.addBook(dto);
 
         assertNotNull(result);
-        verify(bookRepository).save(book);
+        assertEquals(10L, result.getId());
+        assertEquals("New Book", result.getName());
+        verify(bookRepository).save(any(Book.class));
     }
 
     @Test
-    void updateBookByName_ShouldUpdate() {
-        String name = "Old Name";
+    void addBook_AlreadyExists_ShouldThrowException() {
         BookDTO dto = new BookDTO();
-        Book book = new Book();
+        dto.setName("Existing Book");
+        when(bookRepository.findByName("Existing Book")).thenReturn(Optional.of(new Book()));
 
-        when(bookRepository.findByName(name)).thenReturn(Optional.of(book));
-        when(bookRepository.save(book)).thenReturn(book);
-        when(modelMapper.map(book, BookDTO.class)).thenReturn(dto);
-
-        bookService.updateBook(, name, dto);
-
-        verify(modelMapper).map(dto, book);
-        verify(bookRepository).save(book);
+        assertThrows(AlreadyExistException.class, () -> bookService.addBook(dto));
+        verify(bookRepository, never()).save(any(Book.class));
     }
 
     @Test
-    void deleteBookByName_ShouldDelete() {
+    void updateBook_Success() {
+        Long id = 1L;
+        BookDTO dto = new BookDTO();
+        dto.setId(id);
+        dto.setName("Updated Name");
+
+        Book existingBook = new Book();
+        existingBook.setId(id);
+        existingBook.setName("Old Name");
+
+        when(bookRepository.findById(id)).thenReturn(Optional.of(existingBook));
+        when(bookRepository.save(any(Book.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        BookDTO result = bookService.updateBook(id, dto);
+
+        assertEquals("Updated Name", result.getName());
+        assertEquals(id, result.getId());
+        verify(bookRepository).save(existingBook);
+    }
+
+
+    @Test
+    void updateBook_NotFound_ShouldThrowException() {
+        Long id = 1L;
+        BookDTO dto = new BookDTO();
+        when(bookRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.updateBook(id, dto));
+        verify(bookRepository, never()).save(any());
+    }
+
+
+    @Test
+    void deleteBookByName_Success() {
         String name = "Delete Me";
-        when(bookRepository.findByName(name)).thenReturn(Optional.of(new Book()));
+        Book book = new Book();
+        book.setName(name);
+        when(bookRepository.findByName(name)).thenReturn(Optional.of(book));
 
         bookService.deleteBookByName(name);
 
@@ -120,34 +220,23 @@ public class BookServiceImplTest {
     }
 
     @Test
-    void getBookByName_ShouldBook_WhenExists(){
-        String bookName = "Java Basic";
-        Book book = new Book();
-        book.setName(bookName);
-        book.setPrice(BigDecimal.valueOf(100));
+    void deleteBookByName_NotFound_ShouldThrowException() {
+        String name = "Unknown";
+        when(bookRepository.findByName(name)).thenReturn(Optional.empty());
 
-        BookDTO bookDTO = new BookDTO();
-        bookDTO.setName(bookName);
-        bookDTO.setPrice(BigDecimal.valueOf(100));
-
-        when(bookRepository.findByName(bookName)).thenReturn(Optional.of(book));
-        when(modelMapper.map(book, BookDTO.class)).thenReturn(bookDTO);
-
-        BookDTO result = bookService.getBookByName(bookName);
-
-        assertNotNull(result);
-        assertEquals(bookName, result.getName());
-        verify(bookRepository, times(1)).findByName(bookName);
+        assertThrows(NotFoundException.class, () -> bookService.deleteBookByName(name));
+        verify(bookRepository, never()).deleteByName(anyString());
     }
 
     @Test
-    void getBookByName_ShouldThrowException_WhenNotFound() {
+    void getAllGenres_ShouldReturnList() {
+        List<String> genres = List.of("Fantasy", "Sci-Fi");
+        when(bookRepository.findAllGenres()).thenReturn(genres);
 
-        String bookName = "Unknown Book";
-        when(bookRepository.findByName(bookName)).thenReturn(Optional.empty());
+        List<String> result = bookService.getAllGenres();
 
-
-        assertThrows(NotFoundException.class, () -> bookService.getBookByName(bookName));
-        verify(bookRepository, times(1)).findByName(bookName);
+        assertEquals(2, result.size());
+        assertTrue(result.contains("Fantasy"));
     }
+
 }

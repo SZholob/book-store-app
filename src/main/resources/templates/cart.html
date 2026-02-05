@@ -55,7 +55,7 @@
 
         <td th:text="${item.totalPrice} + ' ' + #{cart.currency}">Total</td>
         <td>
-          <form action="/cart/remove" method="post">
+          <form th:action="@{/cart/remove}" method="post">
             <input type="hidden" name="bookId" th:value="${item.bookId}">
             <button type="submit" class="btn btn-sm btn-danger"
                     th:text="#{cart.remove}">❌</button>
@@ -87,7 +87,7 @@
                 th:text="${totalPrice} + ' ' + #{cart.currency}"></span>
         </h3>
 
-        <form action="/cart/checkout" method="post">
+        <form th:action="@{/cart/checkout}" method="post">
           <button type="submit" class="btn btn-lg btn-success"
                   th:disabled="${totalPrice > userBalance}"
                   th:text="#{cart.checkout}">
