@@ -126,8 +126,6 @@ class ClientServiceImplTest {
 
         assertNotNull(result);
         assertEquals("encodedPassword", result.getPassword()); // Перевіряємо, що пароль захешовано
-        // Оскільки ми використовуємо Spy на ModelMapper, поле password в result буде захешоване,
-        // бо save повертає об'єкт з encodedPassword, який мапиться назад в DTO.
 
         verify(clientRepository).save(argThat(client ->
                 client.getRole() == Role.CUSTOMER &&

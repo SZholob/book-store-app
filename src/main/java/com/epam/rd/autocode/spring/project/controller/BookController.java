@@ -29,11 +29,11 @@ public class BookController {
 
     @GetMapping
     public String getAllBooks(Model model,
-                              @RequestParam(defaultValue = "0") int page,      // Номер сторінки (0 - перша)
-                              @RequestParam(defaultValue = "6") int size,      // Скільки книг на сторінці
-                              @RequestParam(defaultValue = "name") String sortField, // Поле для сортування
-                              @RequestParam(defaultValue = "asc") String sortDir,  // Напрямок (asc/desc)
-                              @RequestParam(required = false) String keyword,       // Пошуковий запит
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "6") int size,
+                              @RequestParam(defaultValue = "name") String sortField,
+                              @RequestParam(defaultValue = "asc") String sortDir,
+                              @RequestParam(required = false) String keyword,
                               @RequestParam(required = false) String genre) {
 
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();

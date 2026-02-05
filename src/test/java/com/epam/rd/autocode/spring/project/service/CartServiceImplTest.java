@@ -45,13 +45,13 @@ public class CartServiceImplTest {
         CartItem item = new CartItem();
         item.setBookId(1L);
         item.setQuantity(2);
-        item.setPrice(BigDecimal.valueOf(50)); // Стара ціна
+        item.setPrice(BigDecimal.valueOf(50));
         cartList.add(item);
 
         BookDTO book = new BookDTO();
         book.setId(1L);
-        book.setPrice(BigDecimal.valueOf(100)); // Нова ціна
-        book.setQuantity(1); // Залишилась тільки 1 шт
+        book.setPrice(BigDecimal.valueOf(100));
+        book.setQuantity(1);
 
         when(bookService.getBookById(1L)).thenReturn(book);
 
@@ -230,10 +230,8 @@ public class CartServiceImplTest {
 
     @Test
     void clearCart_ShouldRemoveAttribute() {
-        // WHEN
         cartService.clearCart(session);
 
-        // THEN
         verify(session).removeAttribute(CART_SESSION_KEY);
     }
 

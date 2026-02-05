@@ -71,7 +71,6 @@ class OrderServiceImplTest {
 
     @Test
     void addOrder_Success() {
-        // GIVEN
         OrderDTO inputDto = new OrderDTO();
         inputDto.setClientEmail("client@test.com");
 

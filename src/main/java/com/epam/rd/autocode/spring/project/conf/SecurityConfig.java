@@ -29,24 +29,21 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // -- ПУБЛІЧНИЙ ДОСТУП --
+
                         .requestMatchers("/", "/login", "/registration", "/error").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 
-                        // Дозволяємо перегляд книг усім
+
                         .requestMatchers(HttpMethod.GET, "/books/**").permitAll()
 
-                        // Дозволяємо реєстрацію через API
                         .requestMatchers(HttpMethod.POST, "/clients").permitAll()
 
 
-                        // Співробітники
                         .requestMatchers("/orders/manage/**").hasRole("EMPLOYEE")
                         .requestMatchers("/books/manage/**", "/books/add/**", "/books/edit/**", "/books/delete/**").hasRole("EMPLOYEE")
                         .requestMatchers("/clients/**").hasRole("EMPLOYEE")
                         .requestMatchers("/employees/**").hasRole("EMPLOYEE")
 
-                        // Клієнти
                         .requestMatchers("/orders/my/**", "/cart/**").hasRole("CUSTOMER")
 
                         .requestMatchers("/profile/**").authenticated()

@@ -10,12 +10,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // --- 404 Not Found (власні помилки) ---
+    // --- 404
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView handleNotFoundException(NotFoundException e, HttpServletRequest request) {
@@ -23,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    // --- 403(немає прав) ---
+    // --- 403
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ModelAndView handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
