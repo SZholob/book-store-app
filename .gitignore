@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+logs/
+*.log
+
+*.p12
+*.jks
+keystore.p12
+
+.DS_Store
+Thumbs.db
