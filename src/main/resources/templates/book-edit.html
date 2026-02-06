@@ -91,7 +91,9 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label" th:text="#{book.field.publicationDate}">Publication Date</label>
-                <input type="date" th:field="*{publicationDate}" class="form-control">
+                <input type="date" th:field="*{publicationDate}" class="form-control"
+                       th:classappend="${#fields.hasErrors('publicationDate')} ? 'is-invalid'">
+                <div class="invalid-feedback" th:errors="*{publicationDate}">Date Error</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label" th:text="#{book.field.imageUrl}">Image URL</label>

@@ -2,13 +2,18 @@ package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.conf.SecurityConfig;
 import com.epam.rd.autocode.spring.project.dto.ClientDTO;
+import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.security.JwtUtils;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import com.epam.rd.autocode.spring.project.service.EmployeeService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,6 +41,22 @@ class ProfileControllerTest {
     @MockBean
     private EmployeeService employeeService;
 
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+
+    @BeforeEach
+    void setUp() {
+
+        lenient().when(clientService.getClientByEmail(any())).thenReturn(new ClientDTO());
+        lenient().when(employeeService.getEmployeeByEmail(any())).thenReturn(new EmployeeDTO());
+    }
 
     @Test
     @WithMockUser(username = "me@mail.com", roles = "CUSTOMER")
@@ -60,7 +81,6 @@ class ProfileControllerTest {
         mockMvc.perform(get("/profile"))
                 .andExpect(status().isForbidden());
     }
-
 
     @Test
     @WithMockUser(username = "me@mail.com", roles = "CUSTOMER")
@@ -91,6 +111,7 @@ class ProfileControllerTest {
     @Test
     @WithMockUser(username = "me@mail.com", roles = "CUSTOMER")
     void updateProfile_ShortPassword_ShouldReturnError() throws Exception {
+        // Given
         ClientDTO dbClient = new ClientDTO();
         dbClient.setBalance(BigDecimal.TEN);
         when(clientService.getClientByEmail("me@mail.com")).thenReturn(dbClient);
@@ -104,12 +125,9 @@ class ProfileControllerTest {
                 .andExpect(view().name("profile"))
                 .andExpect(model().attributeHasFieldErrors("client", "password"));
 
-
         verify(clientService, never()).updateMyProfile(any(), any());
-
-        verify(clientService, atLeastOnce()).getClientByEmail("me@mail.com");
+        verify(clientService, times(2)).getClientByEmail("me@mail.com");
     }
-
 
     @Test
     @WithMockUser(username = "me@mail.com", roles = "CUSTOMER")

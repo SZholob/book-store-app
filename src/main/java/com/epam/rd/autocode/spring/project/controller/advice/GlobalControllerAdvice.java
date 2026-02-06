@@ -23,13 +23,12 @@ public class GlobalControllerAdvice {
 
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
             String email = auth.getName();
-
-            try {
+            if (auth.getPrincipal().toString().contains("ROLE_CUSTOMER")) {
                 ClientDTO client = clientService.getClientByEmail(email);
                 model.addAttribute("currentUser", client);
                 model.addAttribute("userType", "CLIENT");
                 model.addAttribute("globalBalance", client.getBalance());
-            } catch (Exception e) {
+            } else {
                 EmployeeDTO employee = employeeService.getEmployeeByEmail(email);
                 model.addAttribute("currentUser", employee);
                 model.addAttribute("userType", "EMPLOYEE");

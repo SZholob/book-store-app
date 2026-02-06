@@ -1,14 +1,19 @@
 package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.conf.SecurityConfig;
+import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.security.JwtUtils;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import com.epam.rd.autocode.spring.project.service.EmployeeService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,6 +41,21 @@ class EmployeeControllerTest {
     @MockBean
     private ClientService clientService;
 
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(clientService.getClientByEmail(any())).thenReturn(new ClientDTO());
+        lenient().when(employeeService.getEmployeeByEmail(any())).thenReturn(new EmployeeDTO());
+    }
 
     @Test
     @WithMockUser(username = "emp@store.com", roles = "EMPLOYEE")
@@ -59,8 +79,6 @@ class EmployeeControllerTest {
         mockMvc.perform(get("/employees/profile"))
                 .andExpect(status().isForbidden()); // 403
     }
-
-
 
     @Test
     @WithMockUser(username = "emp@store.com", roles = "EMPLOYEE")
@@ -92,7 +110,6 @@ class EmployeeControllerTest {
     @Test
     @WithMockUser(username = "emp@store.com", roles = "EMPLOYEE")
     void updateProfile_ShortPassword_ShouldReturnError() throws Exception {
-
         EmployeeDTO dbEmployee = new EmployeeDTO();
         dbEmployee.setBirthDate(LocalDate.now());
         when(employeeService.getEmployeeByEmail("emp@store.com")).thenReturn(dbEmployee);
@@ -107,6 +124,7 @@ class EmployeeControllerTest {
                 .andExpect(model().attributeHasFieldErrors("employee", "password"));
 
         verify(employeeService, never()).updateEmployeeByEmail(any(), any());
+
 
         verify(employeeService, times(2)).getEmployeeByEmail("emp@store.com");
     }

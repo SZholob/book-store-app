@@ -2,8 +2,11 @@ package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.conf.SecurityConfig;
 import com.epam.rd.autocode.spring.project.dto.ClientDTO;
+import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.security.JwtUtils;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import com.epam.rd.autocode.spring.project.service.EmployeeService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,6 +15,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,8 +24,7 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,6 +43,22 @@ class ClientControllerTest {
     @MockBean
     private EmployeeService employeeService;
 
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+
+    @BeforeEach
+    void setUp() {
+        // Заглушки для GlobalControllerAdvice, щоб уникнути NPE (500 error)
+        lenient().when(clientService.getClientByEmail(any())).thenReturn(new ClientDTO());
+        lenient().when(employeeService.getEmployeeByEmail(any())).thenReturn(new EmployeeDTO());
+    }
 
     @Test
     @WithMockUser(roles = "EMPLOYEE")
@@ -67,7 +87,6 @@ class ClientControllerTest {
                 .andExpect(status().isForbidden()); // 403
     }
 
-
     @Test
     @WithMockUser(roles = "EMPLOYEE")
     void blockClient_Employee_ShouldRedirect() throws Exception {
@@ -87,8 +106,9 @@ class ClientControllerTest {
         mockMvc.perform(post("/clients/any@email.com/block")
                         .with(csrf()))
                 .andExpect(status().isForbidden());
-    }
 
+        verify(clientService, never()).blockClient(any());
+    }
 
     @Test
     @WithMockUser(roles = "EMPLOYEE")

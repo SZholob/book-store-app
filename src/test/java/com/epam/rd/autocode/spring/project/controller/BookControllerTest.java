@@ -2,6 +2,7 @@ package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.conf.SecurityConfig;
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
+import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.security.JwtUtils;
 import com.epam.rd.autocode.spring.project.service.BookService;
 import com.epam.rd.autocode.spring.project.service.ClientService;
@@ -14,6 +15,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,7 +50,13 @@ class BookControllerTest {
     private EmployeeService employeeService;
 
     @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
     private JwtUtils jwtUtils;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Test
     @WithAnonymousUser
@@ -96,8 +105,14 @@ class BookControllerTest {
     @Test
     @WithMockUser(username = "user", roles = "CUSTOMER")
     void showAddBookForm_Customer_ShouldBeForbidden() throws Exception {
+        ClientDTO mockClient = new ClientDTO();
+        mockClient.setEmail("user");
+        mockClient.setBalance(java.math.BigDecimal.ZERO);
+
+        when(clientService.getClientByEmail("user")).thenReturn(mockClient);
+
         mockMvc.perform(get("/books/add"))
-                .andExpect(status().isForbidden()); // 403
+                .andExpect(status().isForbidden());
     }
 
     @Test

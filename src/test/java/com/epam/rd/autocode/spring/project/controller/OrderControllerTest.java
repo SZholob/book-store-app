@@ -1,11 +1,15 @@
 package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.conf.SecurityConfig;
+import com.epam.rd.autocode.spring.project.dto.ClientDTO;
+import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
 import com.epam.rd.autocode.spring.project.dto.OrderDTO;
 import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
+import com.epam.rd.autocode.spring.project.security.JwtUtils;
 import com.epam.rd.autocode.spring.project.service.ClientService;
 import com.epam.rd.autocode.spring.project.service.EmployeeService;
 import com.epam.rd.autocode.spring.project.service.OrderService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,6 +18,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,8 +28,7 @@ import java.util.Collections;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,9 +46,25 @@ class OrderControllerTest {
 
     @MockBean
     private EmployeeService employeeService;
+
     @MockBean
     private ClientService clientService;
 
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(clientService.getClientByEmail(any())).thenReturn(new ClientDTO());
+        lenient().when(employeeService.getEmployeeByEmail(any())).thenReturn(new EmployeeDTO());
+    }
 
     @Test
     @WithMockUser(username = "client@email.com", roles = "CUSTOMER")
@@ -93,8 +114,6 @@ class OrderControllerTest {
         mockMvc.perform(get("/orders/manage"))
                 .andExpect(status().isForbidden());
     }
-
-
 
     @Test
     @WithMockUser(roles = "EMPLOYEE")

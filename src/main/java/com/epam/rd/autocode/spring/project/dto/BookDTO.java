@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class BookDTO{
     @Positive(message = "Price must be greater than 0")
     private BigDecimal price;
 
+    @PastOrPresent(message = "Publication date cannot be in the future")
     private LocalDate publicationDate;
 
     @NotBlank(message = "Author is required")
