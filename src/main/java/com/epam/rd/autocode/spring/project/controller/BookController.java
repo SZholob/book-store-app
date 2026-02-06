@@ -140,7 +140,6 @@ public class BookController {
         return "redirect:/books/manage";
     }
 
-
     @GetMapping("/manage")
     @PreAuthorize("hasRole('EMPLOYEE')")
     public String manageBooks(Model model,
@@ -151,7 +150,6 @@ public class BookController {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<BookDTO> bookPage = bookService.getAllBooks(keyword, null, pageable);
-
 
         model.addAttribute("books", bookPage.getContent());
         model.addAttribute("currentPage", page);
