@@ -1,68 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="CONSOLE_PATTERN" value="%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{15}) - %msg%n"/>
+    <property name="LOGS" value="./logs" />
 
-    <property name="FILE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{ISO8601} %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable</Pattern>
+        </layout>
+    </appender>
 
-    <appender name="ERRORS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/errors.log</file>
+    <appender name="SecurityFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/security.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1} - %m%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/archived/security-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="BusinessFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/business.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1} - %m%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/archived/business-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/errors.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
+            <level>ERROR</level> </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1} - %m%n</Pattern>
+        </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/errors.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>60</maxHistory>
-        </rollingPolicy>
-        <encoder><pattern>${FILE_PATTERN}</pattern></encoder>
-    </appender>
-
-    <appender name="SECURITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/security.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/security.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOGS}/archived/errors-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-        <encoder><pattern>${FILE_PATTERN}</pattern></encoder>
     </appender>
 
-    <appender name="BUSINESS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/business.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/business.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder><pattern>${FILE_PATTERN}</pattern></encoder>
-    </appender>
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder><pattern>${CONSOLE_PATTERN}</pattern></encoder>
-    </appender>
-
-    <logger name="org.springframework" level="WARN"/>
-    <logger name="org.hibernate" level="WARN"/>
-    <logger name="com.zaxxer" level="WARN"/>
-
-    <logger name="com.epam.rd.autocode.spring.project.service.impl.UserDetailsServiceImpl" level="INFO" additivity="false">
-        <appender-ref ref="SECURITY_FILE"/>
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ERRORS_FILE"/>
+    <logger name="SECURITY_LOG" level="info" additivity="false">
+        <appender-ref ref="SecurityFile" />
+        <appender-ref ref="Console" />
     </logger>
 
-    <logger name="com.epam.rd.autocode.spring.project.controller.AuthController" level="INFO" additivity="false">
-        <appender-ref ref="SECURITY_FILE"/>
-        <appender-ref ref="CONSOLE"/>
+    <logger name="BUSINESS_LOG" level="info" additivity="false">
+        <appender-ref ref="BusinessFile" />
+        <appender-ref ref="Console" />
     </logger>
 
-    <logger name="com.epam.rd.autocode.spring.project" level="INFO" additivity="false">
-        <appender-ref ref="BUSINESS_FILE"/>
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ERRORS_FILE"/>
-    </logger>
-
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ERRORS_FILE"/>
-    </root>
+    <root level="info">
+        <appender-ref ref="Console" />
+        <appender-ref ref="ErrorFile" /> </root>
 
 </configuration>
