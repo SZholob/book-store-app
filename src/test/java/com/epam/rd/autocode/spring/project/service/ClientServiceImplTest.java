@@ -124,7 +124,7 @@ class ClientServiceImplTest {
         ClientDTO result = clientService.addClient(dto);
 
         assertNotNull(result);
-        assertEquals("encodedPassword", result.getPassword()); // Перевіряємо, що пароль захешовано
+        assertEquals("encodedPassword", result.getPassword());
 
         verify(clientRepository).save(argThat(client ->
                 client.getRole() == Role.CUSTOMER &&

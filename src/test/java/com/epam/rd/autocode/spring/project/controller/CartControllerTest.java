@@ -76,7 +76,7 @@ class CartControllerTest {
     @Test
     @WithMockUser(username = "rich@client.com", roles = "CUSTOMER")
     void viewCart_Authenticated_ShouldShowBalance() throws Exception {
-        // Given
+
         ClientDTO client = new ClientDTO();
         client.setBalance(BigDecimal.valueOf(1000));
         when(clientService.getClientByEmail("rich@client.com")).thenReturn(client);
@@ -84,10 +84,9 @@ class CartControllerTest {
         when(cartService.getCart(any())).thenReturn(Collections.emptyList());
         when(cartService.calculateTotal(any())).thenReturn(BigDecimal.ZERO);
 
-        // When & Then
         mockMvc.perform(get("/cart"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("cart")) // Перевіряємо ім'я view
+                .andExpect(view().name("cart"))
                 .andExpect(model().attribute("userBalance", BigDecimal.valueOf(1000)));
     }
 

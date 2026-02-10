@@ -22,14 +22,14 @@ VALUES (1000.00, 'client1@example.com', 'Medelyn Wright', '$2a$12$K.6L0uHq4b1PGB
        (1050.90, 'client9@example.com', 'Amina Clarke', '$2a$12$K.6L0uHq4b1PGB8tef5vKe67.2HKOq6UqmZmI/ZIhxXkEeysfffri', 'CUSTOMER', false),
        (880.20, 'client10@example.com', 'Bryson Chavez', '$2a$12$K.6L0uHq4b1PGB8tef5vKe67.2HKOq6UqmZmI/ZIhxXkEeysfffri', 'CUSTOMER', false);
 
-INSERT INTO BOOKS (name, genre, age_group, price, publication_year, author, number_of_pages, characteristics,description, language, quantity)
-VALUES ('The Hidden Treasure', 'Adventure', 'ADULT', 24.99, '2018-05-15', 'Emily White', 400, 'Mysterious journey','An enthralling adventure of discovery', 'ENGLISH', 20),
-       ('Echoes of Eternity', 'Fantasy', 'TEEN', 16.50, '2011-01-15', 'Daniel Black', 350, 'Magical realms', 'A spellbinding tale of magic and destiny', 'ENGLISH', 20),
-       ('Whispers in the Shadows', 'Mystery', 'ADULT', 29.95, '2018-08-11', 'Sophia Green', 450, 'Intriguing suspense','A gripping mystery that keeps you guessing', 'ENGLISH', 20),
-       ('The Starlight Sonata', 'Romance', 'ADULT', 21.75, '2011-05-15', 'Michael Rose', 320, 'Heartwarming love story','A beautiful journey of love and passion', 'ENGLISH', 20),
-       ('Beyond the Horizon', 'Science Fiction', 'CHILD', 18.99, '2004-05-15', 'Alex Carter', 280,'Interstellar adventure', 'An epic sci-fi adventure beyond the stars', 'ENGLISH', 20),
-       ('Dancing with Shadows', 'Thriller', 'ADULT', 26.50, '2015-05-15', 'Olivia Smith', 380, 'Suspenseful twists','A thrilling tale of danger and intrigue', 'ENGLISH', 20),
-       ('Voices in the Wind', 'Historical Fiction', 'ADULT', 32.00, '2017-05-15', 'William Turner', 500,'Rich historical setting', 'A compelling journey through time', 'ENGLISH', 20),
-       ('Serenade of Souls', 'Fantasy', 'TEEN', 15.99, '2013-05-15', 'Isabella Reed', 330, 'Enchanting realms','A magical fantasy filled with wonder', 'ENGLISH', 20),
-       ('Silent Whispers', 'Mystery', 'ADULT', 27.50, '2021-05-15', 'Benjamin Hall', 420, 'Intricate detective work','A mystery that keeps you on the edge', 'ENGLISH', 20),
-       ('Whirlwind Romance', 'Romance', 'OTHER', 23.25, '2022-05-15', 'Emma Turner', 360, 'Passionate love affair','A romance that sweeps you off your feet', 'ENGLISH', 20);
+INSERT INTO BOOKS (name, genre, age_group, price, publication_year, author, number_of_pages, characteristics,description, language, quantity, image_url)
+VALUES ('The Hidden Treasure', 'Adventure', 'ADULT', 24.99, '2018-05-15', 'Emily White', 400, 'Mysterious journey','An enthralling adventure of discovery', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/91Kcs1WjhAL._SL1500_.jpg'),
+       ('Echoes of Eternity', 'Fantasy', 'TEEN', 16.50, '2011-01-15', 'Daniel Black', 350, 'Magical realms', 'A spellbinding tale of magic and destiny', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/91dF8qfFYwL._SL1500_.jpg'),
+       ('Whispers in the Shadows', 'Mystery', 'ADULT', 29.95, '2018-08-11', 'Sophia Green', 450, 'Intriguing suspense','A gripping mystery that keeps you guessing', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/815pI1Xg+yL._SL1500_.jpg'),
+       ('The Starlight Sonata', 'Romance', 'ADULT', 21.75, '2011-05-15', 'Michael Rose', 320, 'Heartwarming love story','A beautiful journey of love and passion', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/81AEcBoqfjL._SL1500_.jpg'),
+       ('Beyond the Horizon', 'Science Fiction', 'CHILD', 18.99, '2004-05-15', 'Alex Carter', 280,'Interstellar adventure', 'An epic sci-fi adventure beyond the stars', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/51GQFBR7C7L.jpg'),
+       ('Dancing with Shadows', 'Thriller', 'ADULT', 26.50, '2015-05-15', 'Olivia Smith', 380, 'Suspenseful twists','A thrilling tale of danger and intrigue', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/71X0SlDLCML._SL1360_.jpg'),
+       ('Voices in the Wind', 'Historical Fiction', 'ADULT', 32.00, '2017-05-15', 'William Turner', 500,'Rich historical setting', 'A compelling journey through time', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/51s0xP19r8L._SY445_SX342_QL70_FMwebp_.jpg'),
+       ('Serenade of Souls', 'Fantasy', 'TEEN', 15.99, '2013-05-15', 'Isabella Reed', 330, 'Enchanting realms','A magical fantasy filled with wonder', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/51QCQncFpgL.jpg'),
+       ('Silent Whispers', 'Mystery', 'ADULT', 27.50, '2021-05-15', 'Benjamin Hall', 420, 'Intricate detective work','A mystery that keeps you on the edge', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/81Wx94ZrAdL._SL1500_.jpg'),
+       ('Whirlwind Romance', 'Romance', 'OTHER', 23.25, '2022-05-15', 'Emma Turner', 360, 'Passionate love affair','A romance that sweeps you off your feet', 'ENGLISH', 20,'https://m.media-amazon.com/images/I/812x3mGfybL._SL1500_.jpg');

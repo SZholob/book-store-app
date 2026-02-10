@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 @Aspect
 @Component
-@Slf4j // Тут ми пишемо просто в корінь, але рівень буде ERROR
+@Slf4j
 public class ErrorLoggingAspect {
 
     @AfterThrowing(pointcut = "execution(* com.epam.rd.autocode.spring.project.service..*(..))", throwing = "ex")

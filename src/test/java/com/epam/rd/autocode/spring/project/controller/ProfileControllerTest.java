@@ -111,7 +111,6 @@ class ProfileControllerTest {
     @Test
     @WithMockUser(username = "me@mail.com", roles = "CUSTOMER")
     void updateProfile_ShortPassword_ShouldReturnError() throws Exception {
-        // Given
         ClientDTO dbClient = new ClientDTO();
         dbClient.setBalance(BigDecimal.TEN);
         when(clientService.getClientByEmail("me@mail.com")).thenReturn(dbClient);

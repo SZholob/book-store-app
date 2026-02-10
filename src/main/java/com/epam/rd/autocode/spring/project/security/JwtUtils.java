@@ -42,7 +42,7 @@ public class JwtUtils {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
             return true;
         } catch (JwtException e) {
-            // Тут можна додати логування помилок
+            //
         }
         return false;
     }

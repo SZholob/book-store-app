@@ -55,7 +55,6 @@ class ClientControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Заглушки для GlobalControllerAdvice, щоб уникнути NPE (500 error)
         lenient().when(clientService.getClientByEmail(any())).thenReturn(new ClientDTO());
         lenient().when(employeeService.getEmployeeByEmail(any())).thenReturn(new EmployeeDTO());
     }
